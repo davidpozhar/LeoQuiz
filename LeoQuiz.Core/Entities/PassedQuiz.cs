@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Entities
 {
@@ -17,5 +18,7 @@ namespace LeoQuiz.Core.Entities
         public Quiz Quiz { get; set; }
 
         public User User { get; set; }
+
+        public List<PassedQuizAnswer> PassedQuizAnswers { get; set; }
     }
 }

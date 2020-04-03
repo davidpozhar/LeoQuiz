@@ -5,7 +5,7 @@ namespace LeoQuiz.DAL
 {
     public class LeoQuizApiContext : DbContext
     {
-        public DbSet<User> Admin { get; set; }
+        public DbSet<User> User { get; set; }
 
         public DbSet<Answer> Answer { get; set; }
 
@@ -15,6 +15,8 @@ namespace LeoQuiz.DAL
 
         public DbSet<Quiz> Quiz { get; set; }
 
+        public DbSet<PassedQuizAnswer> PassedQuizAnswer { get; set;
+        }
         public LeoQuizApiContext(DbContextOptions op) : base(op)
         {
 
@@ -40,6 +42,8 @@ namespace LeoQuiz.DAL
                 .HasConstraintName("PassedQuiz_Quiz");
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.QuizUrl).IsRequired();
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -49,6 +53,7 @@ namespace LeoQuiz.DAL
                 .HasForeignKey(e => e.QuestionId);
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Text).IsRequired();
             });
 
             modelBuilder.Entity<PassedQuiz>(entity =>
@@ -58,7 +63,28 @@ namespace LeoQuiz.DAL
                 .HasForeignKey(e => e.UserId)
                 .HasConstraintName("Interviewee_PassedQuiz");
 
+                entity.HasMany(e => e.PassedQuizAnswers)
+                .WithOne(e => e.PassedQuiz)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasForeignKey(e => e.PassedQuizId)
+                .HasConstraintName("PassedQuizAnswers_PassedQuiz");
+
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.PassDate).IsRequired();
+                entity.Property(e => e.QuizId).IsRequired();
+            });
+
+            modelBuilder.Entity<Answer>(entity =>
+            {
+                entity.HasMany(e => e.PassedQuizAnswers)
+                .WithOne(e => e.Answer)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasForeignKey(e => e.AnswerId)
+                .HasConstraintName("PassedQuizAnswers_Answer");
+
+                entity.Property(e => e.Text).IsRequired();
+                entity.Property(e => e.IsCorrect).IsRequired();
+                entity.Property(e => e.QuestionId).IsRequired();
             });
         }
     }

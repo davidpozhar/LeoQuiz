@@ -9,6 +9,14 @@
     <Compile Remove="Migrations\20200403123657_CreateDb.Designer.cs" />
     <Compile Remove="Migrations\20200403134837_CreateDb.2.cs" />
     <Compile Remove="Migrations\20200403134837_CreateDb.2.Designer.cs" />
+    <Compile Remove="Migrations\20200403135316_CreateDb.cs" />
+    <Compile Remove="Migrations\20200403135316_CreateDb.Designer.cs" />
+    <Compile Remove="Migrations\20200403140034_CreateDb.cs" />
+    <Compile Remove="Migrations\20200403140034_CreateDb.Designer.cs" />
+    <Compile Remove="Migrations\20200403160555_CreateDb.cs" />
+    <Compile Remove="Migrations\20200403160555_CreateDb.Designer.cs" />
+    <Compile Remove="Migrations\20200403160738_CreateDn.cs" />
+    <Compile Remove="Migrations\20200403160738_CreateDn.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

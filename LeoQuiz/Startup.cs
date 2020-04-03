@@ -1,5 +1,4 @@
 using AutoMapper;
-using LeoQuiz.Core.Abstractions;
 using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.DAL;
 using LeoQuiz.Services;
@@ -50,7 +49,6 @@ namespace LeoQuiz
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LeoQuiz API", Version = "v1" });
             });
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IQuizService, QuizService>();
 
             services.AddControllers();

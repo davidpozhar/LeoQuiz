@@ -13,8 +13,6 @@ namespace LeoQuiz.Core.Entities
 
         public int MaxAttempts { get; set; }
 
-        public bool AllowSave { get; set; }
-
         public int PassGrade { get; set; }
 
         public string QuizUrl { get; set; }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeoQuiz.DAL.Migrations
 {
     [DbContext(typeof(LeoQuizApiContext))]
-    [Migration("20200403135316_CreateDb")]
+    [Migration("20200403160910_CreateDb")]
     partial class CreateDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,7 @@ namespace LeoQuiz.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -72,6 +73,28 @@ namespace LeoQuiz.DAL.Migrations
                     b.ToTable("PassedQuiz");
                 });
 
+            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PassedQuizId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.HasIndex("PassedQuizId");
+
+                    b.ToTable("PassedQuizAnswer");
+                });
+
             modelBuilder.Entity("LeoQuiz.Core.Entities.Question", b =>
                 {
                     b.Property<int>("Id")
@@ -83,6 +106,7 @@ namespace LeoQuiz.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan>("TimeLimit")
@@ -102,19 +126,18 @@ namespace LeoQuiz.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("AllowSave")
-                        .HasColumnType("bit");
-
                     b.Property<int>("MaxAttempts")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PassGrade")
                         .HasColumnType("int");
 
                     b.Property<string>("QuizUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeSpan>("TimeLimit")
@@ -151,7 +174,7 @@ namespace LeoQuiz.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Admin");
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("LeoQuiz.Core.Entities.Answer", b =>
@@ -177,6 +200,23 @@ namespace LeoQuiz.DAL.Migrations
                         .HasForeignKey("UserId")
                         .HasConstraintName("Interviewee_PassedQuiz")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizAnswer", b =>
+                {
+                    b.HasOne("LeoQuiz.Core.Entities.Answer", "Answer")
+                        .WithMany("PassedQuizAnswers")
+                        .HasForeignKey("AnswerId")
+                        .HasConstraintName("PassedQuizAnswers_Answer")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("LeoQuiz.Core.Entities.PassedQuiz", "PassedQuiz")
+                        .WithMany("PassedQuizAnswers")
+                        .HasForeignKey("PassedQuizId")
+                        .HasConstraintName("PassedQuizAnswers_PassedQuiz")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
