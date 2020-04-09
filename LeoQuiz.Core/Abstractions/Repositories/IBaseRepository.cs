@@ -15,5 +15,9 @@ namespace LeoQuiz.Core.Abstractions.Repositories
         public TEntity Update(TEntity Entity);
 
         public Task Delete(TId Id);
+
+        public void Save();
+
+        public Task SaveAsync();
     }
 }

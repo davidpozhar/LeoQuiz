@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Dto
 {
-    public class QuizDto : IDto<int>
+    public class QuizViewDto : IDto<int>
     {
         public int Id { get; set; }
 
@@ -17,8 +17,6 @@ namespace LeoQuiz.Core.Dto
 
         public string QuizUrl { get; set; }
 
-        public int UserId { get; set; }
-
-        public List<QuestionDto> Questions { get; set; }
+        public List<QuestionViewDto> Questions { get; set; }
     }
 }

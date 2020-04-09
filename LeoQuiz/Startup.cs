@@ -1,6 +1,8 @@
 using AutoMapper;
+using LeoQuiz.Core.Abstractions.Repositories;
 using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.DAL;
+using LeoQuiz.DAL.Repositories;
 using LeoQuiz.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,6 +52,15 @@ namespace LeoQuiz
             });
 
             services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddScoped<IPassedQuizService, PassedQuizService>();
+
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IPassedQuizRepository, PassedQuizRepository>();
+
 
             services.AddControllers();
         }

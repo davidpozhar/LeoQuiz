@@ -86,6 +86,15 @@ namespace LeoQuiz.DAL
                 entity.Property(e => e.IsCorrect).IsRequired();
                 entity.Property(e => e.QuestionId).IsRequired();
             });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasOne(e => e.UserRole)
+                .WithMany(e => e.Users)
+                .HasForeignKey(e => e.UserRoleId)
+                .HasConstraintName("User_UserRole");
+            });
         }
+                
     }
 }

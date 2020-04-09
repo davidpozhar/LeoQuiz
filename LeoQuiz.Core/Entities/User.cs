@@ -14,9 +14,12 @@ namespace LeoQuiz.Core.Entities
 
         public int Age { get; set; }
 
+        public int UserRoleId { get; set; }
+
+        public UserRole UserRole { get; set; }
+
         public List<Quiz> Quizzes { get; set; }
 
         public List<PassedQuiz> PassedQuizzes { get; set; }
-
     }
 }
