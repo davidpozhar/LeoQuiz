@@ -55,11 +55,13 @@ namespace LeoQuiz
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<IPassedQuizService, PassedQuizService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IQuizRepository, QuizRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IAnswerRepository, AnswerRepository>();
             services.AddScoped<IPassedQuizRepository, PassedQuizRepository>();
+            services.AddScoped<IUserRepository, UserRepository> ();
 
 
             services.AddControllers();

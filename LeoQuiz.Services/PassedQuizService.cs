@@ -13,13 +13,19 @@ namespace LeoQuiz.Services
     public class PassedQuizService : IPassedQuizService
     {
         private readonly IPassedQuizRepository _passedquizRepository;
+        private readonly IAnswerRepository _answerRepository;
+        private readonly IQuizRepository _quizRepository;
+        private readonly IUserService _userService;
 
         private readonly IMapper _mapper;
 
-        public PassedQuizService(IMapper mapper, IPassedQuizRepository passedquizRepository)
+        public PassedQuizService(IMapper mapper, IPassedQuizRepository passedquizRepository, IAnswerRepository answerRepository, IQuizRepository quizRepository, IUserService userService)
         {
             this._mapper = mapper;
             this._passedquizRepository = passedquizRepository;
+            this._answerRepository = answerRepository;
+            this._quizRepository = quizRepository;
+            this._userService = userService;
         }
 
         //return all passedquiz with user and answers (for admin)
@@ -49,9 +55,11 @@ namespace LeoQuiz.Services
         public async Task<PassedQuizDto> Insert(PassedQuizDto passedQuizDto)
         {
             CheckPassedQuiz(passedQuizDto);
+            CheckExistUser(passedQuizDto);
             var entity = new PassedQuiz();
             _mapper.Map(passedQuizDto, entity);
             entity.User.UserRoleId = 2;
+            entity.Grade = CalculateGrade(entity.PassedQuizAnswers, entity.QuizId);
             await _passedquizRepository.Insert(entity);
             _passedquizRepository.Save();
             _mapper.Map(entity, passedQuizDto);
@@ -75,6 +83,46 @@ namespace LeoQuiz.Services
                 {
                     throw new System.Exception();
                 }
+            }
+        }
+
+        private int CalculateGrade(List<PassedQuizAnswer> answers, int quizId)
+        {
+            var allAnswers = _answerRepository.GetAll();
+            var grade = 0;
+
+            foreach(var a in answers)
+            {
+                if (allAnswers.Where(answer => answer.Id == a.AnswerId).ToList().FirstOrDefault().IsCorrect == true)
+                {
+                    grade += 1;
+                }
+            }
+
+            return grade;
+        }
+
+        private bool IsPassed(int quizId, int passedQuizGrade)
+        {
+            var result = false;
+            var quizPassGrade = _quizRepository.GetById(quizId).Result.PassGrade;
+
+            if(passedQuizGrade >= quizPassGrade)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private void CheckExistUser(PassedQuizDto dto)
+        {
+            var user = _userService.GetById(dto.UserId).Result;
+
+            if(user != null)
+            {
+                dto.User = null;
+                dto.UserId = user.Id;
             }
         }
     }
