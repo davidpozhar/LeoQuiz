@@ -5,6 +5,7 @@ using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.Core.Dto;
 using LeoQuiz.Core.Entities;
 using LeoQuiz.Core.Validators;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,39 +24,37 @@ namespace LeoQuiz.Services
             this._questionRepository = questionRepository;
         }
 
-        public List<QuestionDto> GetAll()
+        public async Task<List<QuestionDto>> GetAll()
         {
-            return _questionRepository.GetAll().Select(el => _mapper.Map(el, new QuestionDto())).ToList();
+            return await _questionRepository.GetAll()
+                .Select(el => _mapper.Map(el, new QuestionDto()))
+                .ToListAsync();
         }
 
         public async Task<QuestionDto> GetById(int Id)
         {
             var entity = await _questionRepository.GetById(Id);
             var dto = new QuestionDto();
-            _mapper.Map(entity, dto);
-            return dto;
+            return _mapper.Map(entity, dto);
+            
         }
 
         public async Task<QuestionDto> Insert(QuestionDto questionDto)
         {
             Validation(questionDto);
-            var entity = new Question();
-            _mapper.Map(questionDto, entity);
+            var entity = _mapper.Map(questionDto, new Question());
             await _questionRepository.Insert(entity);
             await _questionRepository.SaveAsync();
-            _mapper.Map(entity, questionDto);
-            return questionDto;
+            return _mapper.Map(entity, questionDto);
         }
 
-        public QuestionDto Update(QuestionDto questionDto)
+        public async Task<QuestionDto> Update(QuestionDto questionDto)
         {
             Validation(questionDto);
-            var entity = new Question();
-            _mapper.Map(questionDto, entity);
+            var entity = _mapper.Map(questionDto, new Question());
             _questionRepository.Update(entity);
-            _questionRepository.Save();
-            _mapper.Map(entity, questionDto);
-            return questionDto;
+            await _questionRepository.SaveAsync();
+            return _mapper.Map(entity, questionDto);
         }
 
         public async Task Delete(int Id)

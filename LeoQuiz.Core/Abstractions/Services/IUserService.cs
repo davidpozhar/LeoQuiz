@@ -6,14 +6,17 @@ namespace LeoQuiz.Core.Abstractions.Services
 {
     public interface IUserService
     {
-        public List<UserDto> GetAll();
+        public Task<List<UserDto>> GetAll();
+
+        public List<UserDto> GetAllInterviewees(int adminId);
 
         public Task<UserDto> GetById(int Id);
 
         public Task<UserDto> Insert(UserDto userDto);
 
-        public UserDto Update(UserDto userDto);
+        public Task<UserDto> Update(UserDto userDto);
 
         public Task Delete(int Id);
+
     }
 }

@@ -21,31 +21,24 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<UserDto>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync()
         {
-            try
-            {
-                var result = _userService.GetAll();
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _userService.GetAll();
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllUsers")]
+        public ActionResult<IEnumerable<UserDto>> GetAllUsers()
+        {
+            var result = _userService.GetAllInterviewees(3);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
-            try
-            {
-                var result = await _userService.GetById(id);
-                return Ok(result);
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
+            var result = await _userService.GetById(id);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -63,39 +56,17 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<UserDto> PutUser(int id, UserDto User)
+        public async Task<ActionResult<UserDto>> PutUserAsync(int id, UserDto User)
         {
-            try
-            {
-                var result = _userService.Update(User);
-                return Ok(result);
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            var result = await _userService.Update(User);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            try
-            {
-                await _userService.Delete(id);
-                return NoContent();
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            await _userService.Delete(id);
+            return NoContent();
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LeoQuiz.Controllers
 {
-    
+
     [EnableCors("AllowMyOrigin")]
     [Route("[controller]")]
     [ApiController]
@@ -23,35 +23,17 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<AnswerDto>> GetAnswers()
+        public async Task<ActionResult<IEnumerable<AnswerDto>>> GetAnswers()
         {
-            try
-            {
-                var result = _answerService.GetAll();
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _answerService.GetAll();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AnswerDto>> GetAnswer(int id)
         {
-            try
-            {
-                var result = await _answerService.GetById(id);
-                return Ok(result);
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            var result = await _answerService.GetById(id);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -69,39 +51,17 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<AnswerDto> PutAnswer(int id, AnswerDto answer)
+        public async Task<ActionResult<AnswerDto>> PutAnswerAsync(int id, AnswerDto answer)
         {
-            try
-            {
-                var result = _answerService.Update(answer);
-                return Ok(result);
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            var result = await _answerService.Update(answer);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAnswer(int id)
         {
-            try
-            {
-                await _answerService.Delete(id);
-                return NoContent();
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            await _answerService.Delete(id);
+            return NoContent();
         }
     }
 }

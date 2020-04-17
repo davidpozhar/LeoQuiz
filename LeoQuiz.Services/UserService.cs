@@ -22,17 +22,15 @@ namespace LeoQuiz.Services
             this._userRepository = userRepository;
         }
 
-        public List<UserDto> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
-            return _userRepository.GetAll().Select(el => _mapper.Map(el, new UserDto())).ToList();
+            return await _userRepository.GetAll().Select(el => _mapper.Map(el, new UserDto())).ToListAsync();
         }
 
         public async Task<UserDto> GetById(int Id)
         {
             var entity = await _userRepository.GetById(Id);
-            var dto = new UserDto();
-            _mapper.Map(entity, dto);
-            return dto;
+            return _mapper.Map(entity, new UserDto());
         }
 
         public async Task<UserDto> Insert(UserDto userDto)
@@ -41,18 +39,16 @@ namespace LeoQuiz.Services
             _mapper.Map(userDto, entity);
             await _userRepository.Insert(entity);
             await _userRepository.SaveAsync();
-            _mapper.Map(entity, userDto);
-            return userDto;
+            return _mapper.Map(entity, userDto);
         }
 
-        public UserDto Update(UserDto userDto)
+        public async Task<UserDto> Update(UserDto userDto)
         {
             var entity = new User();
             _mapper.Map(userDto, entity);
             _userRepository.Update(entity);
-            _userRepository.Save();
-            _mapper.Map(entity, userDto);
-            return userDto;
+            await _userRepository.SaveAsync();
+            return _mapper.Map(entity, userDto);
         }
 
         public async Task Delete(int Id)
@@ -61,16 +57,26 @@ namespace LeoQuiz.Services
             await _userRepository.SaveAsync();
         }
 
+        //Костиль, голова не варить, виправити!!!!!
         public List<UserDto> GetAllInterviewees(int adminId)
         {
-            var users = _userRepository.GetAll()
+            var adminInfo =  _userRepository.GetAll()
                 .Include(admin => admin.Quizzes)
-                .ThenInclude(quizzes => quizzes)
-                .ThenInclude(x=>x)//????
-                .Where(admin=>admin.Id == adminId)
-                .ToList();
+                .ThenInclude(quiz => quiz.PassedQuizzes)
+                .ThenInclude(passquiz => passquiz.User)
+                .Where(admin =>admin.Id == adminId).FirstOrDefault();
 
-            return users;
+            var userList = new List<UserDto>();
+
+            foreach(var quiz in adminInfo.Quizzes)
+            {
+                foreach(var passquiz in quiz.PassedQuizzes)
+                {
+                    userList.Add(_mapper.Map(passquiz.User, new UserDto()));
+                }
+            }
+
+            return userList;
         }
     }
 }

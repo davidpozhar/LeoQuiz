@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using LeoQuiz.Core.Abstractions.Repositories;
 using LeoQuiz.Core.Abstractions.Services;
@@ -24,78 +25,68 @@ namespace LeoQuiz.Services
             this._quizRepository = quizRepository;
         }
        
-        public List<QuizDto> GetAll()
+        public async Task<List<QuizDto>> GetAll()
         {
-            return _quizRepository.GetAll().Select(el => _mapper.Map(el, new QuizDto())).ToList();
+            return await _quizRepository.GetAll()
+                .Select(el => _mapper.Map(el, new QuizDto()))
+                .ToListAsync();
         }
 
         //Якщо інфу всю відразу витягувати треба
-        public List<QuizDto> GetAll(int Id)
+        public async Task<List<QuizDto>> GetAll(int Id)
         {
-            return _quizRepository.GetAll()
-                .Include(quiz => quiz.Questions)
-                .ThenInclude(questions => questions)
-                .ThenInclude(question => question.Answers)
+            return await _quizRepository.GetAll()
                // .Where(quiz => quiz.UserId == Id)
-                .Select(el => _mapper.Map(el, new QuizDto())).ToList();
+               .ProjectTo<QuizDto>(_mapper.ConfigurationProvider)
+               .ToListAsync();
 
         }
 
-        public List<QuizInfoDto> GetAllInfo(int Id)
+        public async Task<List<QuizInfoDto>> GetAllInfo(int Id)
         {
-            return _quizRepository.GetAll()
+            return await _quizRepository.GetAll()
                 .Where(quiz => quiz.UserId == Id)
-                .Select(el => _mapper.Map(el, new QuizInfoDto())).ToList();
+                .Select(el => _mapper.Map(el, new QuizInfoDto()))
+                .ToListAsync();
 
         }
 
-        public QuizDto GetById(int Id)
+        public async Task<QuizDto> GetById(int Id)
         {
-            return _quizRepository.GetAll()
-                .Include(quiz => quiz.Questions)
-                .ThenInclude(questions => questions)
-                .ThenInclude(question => question.Answers)
+            return await _quizRepository.GetAll()
                 .Where(quiz => quiz.Id == Id)
-                .Select(el => _mapper.Map(el, new QuizDto()))
-                .ToList()
-                .FirstOrDefault();
+                .ProjectTo<QuizDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
         }
 
-        public QuizViewDto GetViewById(int Id)
+        public async Task<QuizViewDto> GetViewById(int Id)
         {
-            return _quizRepository.GetAll()
-                .Include(quiz => quiz.Questions)
-                .ThenInclude(questions => questions)
-                .ThenInclude(question => question.Answers)
+            return await _quizRepository.GetAll()
                 .Where(quiz => quiz.Id == Id)
-                .Select(el => _mapper.Map(el, new QuizViewDto()))
-                .ToList()
-                .FirstOrDefault();
+                .ProjectTo<QuizViewDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync();
         }
     
 
         public async Task<QuizDto> Insert(QuizDto quizDto)
         {
             Validation(quizDto);
-            var entity = new Quiz();
-            _mapper.Map(quizDto, entity);
+            var entity = _mapper.Map(quizDto, new Quiz());
             entity.QuizUrl = GenerateUrl(quizDto.Name);
             await _quizRepository.Insert(entity);
-             _quizRepository.Save();
-            _mapper.Map(entity, quizDto);
-            return quizDto;
+            await _quizRepository.SaveAsync();
+            return _mapper.Map(entity, quizDto);
+            
         }
 
-        public QuizDto Update(QuizDto quizDto)
+        public async Task<QuizDto> Update(QuizDto quizDto)
         {
             Validation(quizDto);
-            var entity = new Quiz();
-            _mapper.Map(quizDto, entity);
+            var entity = _mapper.Map(quizDto, new Quiz());
             entity.QuizUrl = GenerateUrl(quizDto.Name);
             _quizRepository.Update(entity);
-            _quizRepository.Save();
-            _mapper.Map(entity, quizDto);
-            return quizDto;
+            await _quizRepository.SaveAsync();
+            return _mapper.Map(entity, quizDto);
         }
         public async Task Delete(int Id)
         {

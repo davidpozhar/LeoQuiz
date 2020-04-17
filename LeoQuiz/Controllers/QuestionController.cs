@@ -21,11 +21,11 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<QuestionDto>> GetQuestions()
+        public async Task<ActionResult<IEnumerable<QuestionDto>>> GetQuestionsAsync()
         {
             try
             {
-                var result = _questionService.GetAll();
+                var result = await _questionService.GetAll();
                 return Ok(result);
             }
             catch
@@ -63,11 +63,11 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<QuestionDto> PutQuestion(int id, QuestionDto Question)
+        public async Task<ActionResult<QuestionDto>> PutQuestionAsync(int id, QuestionDto Question)
         {
             try
             {
-                var result = _questionService.Update(Question);
+                var result = await _questionService.Update(Question);
                 return Ok(result);
             }
             catch (NullReferenceException)
@@ -83,19 +83,9 @@ namespace LeoQuiz.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteQuestion(int id)
         {
-            try
-            {
-                await _questionService.Delete(id);
-                return NoContent();
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            await _questionService.Delete(id);
+            return NoContent();
+
         }
     }
 }

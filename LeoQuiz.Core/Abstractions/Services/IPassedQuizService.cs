@@ -6,9 +6,9 @@ namespace LeoQuiz.Core.Abstractions.Services
 {
     public interface IPassedQuizService
     {
-        public List<PassedQuizDto> GetAll(int Id);
+        public Task<List<PassedQuizDto>> GetAll(int Id);
 
-        public PassedQuizFullDto GetById(int Id);
+        public Task<PassedQuizFullDto> GetById(int Id);
 
         public Task<PassedQuizDto> Insert(PassedQuizDto passedQuizDto);
 

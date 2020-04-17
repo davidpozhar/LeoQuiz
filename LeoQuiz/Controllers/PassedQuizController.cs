@@ -22,31 +22,17 @@ namespace LeoQuiz.Controllers
 
         //Після авторизації айді визначати всередині
         [HttpGet("GetAll/{id}")]
-        public ActionResult<IEnumerable<PassedQuizDto>> GetAll(int id)
+        public async Task<ActionResult<IEnumerable<PassedQuizDto>>> GetAllAsync(int id)
         {
-            try
-            {
-                var result = _passedQuizService.GetAll(id);
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _passedQuizService.GetAll(id);
+            return Ok(result);
         }
 
         [HttpGet("GetPassedQuizById/{id}")]
-        public ActionResult<IEnumerable<PassedQuizFullDto>> GetPassedQuizById(int id)
+        public async Task<ActionResult<IEnumerable<PassedQuizFullDto>>> GetPassedQuizById(int id)
         {
-            try
-            {
-                var result = _passedQuizService.GetById(id);
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _passedQuizService.GetById(id);
+            return Ok(result);
         }
 
         [HttpPost("PostPassedQuiz")]
@@ -66,19 +52,8 @@ namespace LeoQuiz.Controllers
         [HttpDelete("DeletePassedQuiz/{id}")]
         public async Task<ActionResult> DeleteQuiz(int id)
         {
-            try
-            {
-                await _passedQuizService.Delete(id);
-                return NoContent();
-            }
-            catch (NullReferenceException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return Problem();
-            }
+            await _passedQuizService.Delete(id);
+            return NoContent();
         }
 
 

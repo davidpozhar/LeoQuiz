@@ -5,11 +5,11 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeoQuiz", "LeoQuiz\LeoQuiz.csproj", "{C33A5EBF-E01C-484B-BD17-8402C0AFFC69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeoQuiz.Core", "LeoQuiz.Core\LeoQuiz.Core.csproj", "{D9A86A5E-709F-41A3-88E3-FA151C464A44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeoQuiz.Core", "LeoQuiz.Core\LeoQuiz.Core.csproj", "{D9A86A5E-709F-41A3-88E3-FA151C464A44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeoQuiz.DAL", "LeoQuiz.DAL\LeoQuiz.DAL.csproj", "{03675C43-B825-4DDF-A1F3-44A06F4C016D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeoQuiz.DAL", "LeoQuiz.DAL\LeoQuiz.DAL.csproj", "{03675C43-B825-4DDF-A1F3-44A06F4C016D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeoQuiz.Services", "LeoQuiz.Services\LeoQuiz.Services.csproj", "{01051626-D6C7-41D1-B1C6-D1D0FD9D8827}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeoQuiz.Services", "LeoQuiz.Services\LeoQuiz.Services.csproj", "{01051626-D6C7-41D1-B1C6-D1D0FD9D8827}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

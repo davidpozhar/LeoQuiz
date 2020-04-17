@@ -3,6 +3,7 @@ using LeoQuiz.Core.Abstractions.Repositories;
 using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.DAL;
 using LeoQuiz.DAL.Repositories;
+using LeoQuiz.Extentions;
 using LeoQuiz.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using NLog;
+using System;
+using System.IO;
 
 namespace LeoQuiz
 {
@@ -18,6 +22,7 @@ namespace LeoQuiz
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -63,12 +68,13 @@ namespace LeoQuiz
             services.AddScoped<IPassedQuizRepository, PassedQuizRepository>();
             services.AddScoped<IUserRepository, UserRepository> ();
 
+            services.AddSingleton<ILoggerService, LoggerService>();
 
             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerService logger)
         {
             app.UseSwagger();
 
@@ -83,6 +89,9 @@ namespace LeoQuiz
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //app.ConfigureExceptionHandler(logger);
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 
