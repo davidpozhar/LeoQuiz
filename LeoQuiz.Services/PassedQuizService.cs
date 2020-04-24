@@ -30,7 +30,7 @@ namespace LeoQuiz.Services
         }
 
         //return all passedquiz with user and answers (for admin)
-        public async Task<List<PassedQuizDto>> GetAll(int Id)
+        public async Task<List<PassedQuizDto>> GetAll(string Id)
         {
             return await _passedquizRepository.GetAll()
                 .Include(pasquiz => pasquiz.PassedQuizAnswers)
@@ -49,14 +49,9 @@ namespace LeoQuiz.Services
                .ProjectTo<PassedQuizFullDto>(_mapper.ConfigurationProvider)
                .FirstOrDefaultAsync();
 
-            if (result != null)
-            {
-                return result;
+            if (result == null) throw new System.NullReferenceException();
 
-            } else
-            {
-                throw new System.NullReferenceException();
-            }
+            return result;
         }
 
         public async Task<PassedQuizDto> Insert(PassedQuizDto passedQuizDto)
@@ -69,7 +64,7 @@ namespace LeoQuiz.Services
             entity.Grade = CalculateGrade(entity.PassedQuizAnswers, entity.QuizId);
             await _passedquizRepository.Insert(entity);
             await _passedquizRepository.SaveAsync();
-            return _mapper.Map(entity, passedQuizDto);
+            return _mapper.Map<PassedQuiz, PassedQuizDto>(entity);
         }
 
         public async Task Delete(int Id)

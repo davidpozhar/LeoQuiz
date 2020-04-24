@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -17,9 +17,14 @@
     <Compile Remove="Migrations\20200403160555_CreateDb.Designer.cs" />
     <Compile Remove="Migrations\20200403160738_CreateDn.cs" />
     <Compile Remove="Migrations\20200403160738_CreateDn.Designer.cs" />
+    <Compile Remove="Migrations\20200403160910_CreateDb.cs" />
+    <Compile Remove="Migrations\20200403160910_CreateDb.Designer.cs" />
+    <Compile Remove="Migrations\20200408185034_UpdatedDb.cs" />
+    <Compile Remove="Migrations\20200408185034_UpdatedDb.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.3">
       <PrivateAssets>all</PrivateAssets>

@@ -13,7 +13,7 @@ namespace LeoQuiz.Core.Entities
 
         public int QuizId { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public Quiz Quiz { get; set; }
 

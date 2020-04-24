@@ -25,6 +25,8 @@ namespace LeoQuiz.Core
             CreateMap<PassedQuizAnswer, PassedQuizAnswerFullDto>().ReverseMap();
 
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserRegisterDto>().ReverseMap();
+            CreateMap<User, UserLoginDto>().ReverseMap();
         }
     }
 }

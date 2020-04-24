@@ -33,7 +33,7 @@ namespace LeoQuiz.Services
         }
 
         //Якщо інфу всю відразу витягувати треба
-        public async Task<List<QuizDto>> GetAll(int Id)
+        public async Task<List<QuizDto>> GetAll(string Id)
         {
             return await _quizRepository.GetAll()
                // .Where(quiz => quiz.UserId == Id)
@@ -42,7 +42,7 @@ namespace LeoQuiz.Services
 
         }
 
-        public async Task<List<QuizInfoDto>> GetAllInfo(int Id)
+        public async Task<List<QuizInfoDto>> GetAllInfo(string Id)
         {
             return await _quizRepository.GetAll()
                 .Where(quiz => quiz.UserId == Id)
@@ -75,8 +75,8 @@ namespace LeoQuiz.Services
             entity.QuizUrl = GenerateUrl(quizDto.Name);
             await _quizRepository.Insert(entity);
             await _quizRepository.SaveAsync();
-            return _mapper.Map(entity, quizDto);
-            
+            return _mapper.Map<Quiz, QuizDto>(entity);
+
         }
 
         public async Task<QuizDto> Update(QuizDto quizDto)
@@ -86,7 +86,7 @@ namespace LeoQuiz.Services
             entity.QuizUrl = GenerateUrl(quizDto.Name);
             _quizRepository.Update(entity);
             await _quizRepository.SaveAsync();
-            return _mapper.Map(entity, quizDto);
+            return _mapper.Map<Quiz, QuizDto>(entity);
         }
         public async Task Delete(int Id)
         {
@@ -107,7 +107,7 @@ namespace LeoQuiz.Services
             var Length = System.Math.Min(randomString.Length, quizInfo.Length);
 
            
-            return "http://localhost:5000/LeoQuiz/Quiz/" + randomString.Substring(Length) + quizInfo.Substring(Length); ;
+            return randomString.Substring(Length) + quizInfo.Substring(Length); ;
         }
     }
 }

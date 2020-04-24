@@ -2,7 +2,6 @@
 using LeoQuiz.Core.Dto;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,19 +38,17 @@ namespace LeoQuiz.Controllers
         [HttpPost]
         public async Task<ActionResult<AnswerDto>> PostAnswer(AnswerDto answer)
         {
-            try
-            {
-                await _answerService.Insert(answer);
-                return Ok(answer);
-            }
-            catch (Exception)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
+
+            await _answerService.Insert(answer);
+            return Ok(answer);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<AnswerDto>> PutAnswerAsync(int id, AnswerDto answer)
+        [HttpPut]
+        public async Task<ActionResult<AnswerDto>> PutAnswer(AnswerDto answer)
         {
             var result = await _answerService.Update(answer);
             return Ok(result);

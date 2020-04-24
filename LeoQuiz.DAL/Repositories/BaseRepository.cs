@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LeoQuiz.DAL.Repositories
 {
-    public abstract class BaseRepository<TEntity, TId> : IBaseRepository<TEntity, TId> where TEntity : class, IEntity<TId>
+    public abstract class BaseRepository<TEntity, TId> : IBaseRepository<TEntity, TId> where TEntity : class
     {
         private readonly LeoQuizApiContext _dbContext;
         public BaseRepository(LeoQuizApiContext context)

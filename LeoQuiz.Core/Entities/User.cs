@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Entities
 {
-    public class User : IEntity<int> 
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
 
         public string Surname { get; set; }
-
-        public string Email { get; set; }
 
         public int Age { get; set; }
 

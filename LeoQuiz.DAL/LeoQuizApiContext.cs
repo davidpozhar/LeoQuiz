@@ -1,9 +1,10 @@
 ﻿using LeoQuiz.Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeoQuiz.DAL
 {
-    public class LeoQuizApiContext : DbContext
+    public class LeoQuizApiContext : IdentityDbContext
     {
         public DbSet<User> User { get; set; }
 
@@ -94,6 +95,8 @@ namespace LeoQuiz.DAL
                 .HasForeignKey(e => e.UserRoleId)
                 .HasConstraintName("User_UserRole");
             });
+
+            base.OnModelCreating(modelBuilder);
         }
                 
     }

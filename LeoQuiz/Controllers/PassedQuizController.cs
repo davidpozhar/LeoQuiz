@@ -1,9 +1,10 @@
 ﻿using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.Core.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace LeoQuiz.Controllers
@@ -20,11 +21,11 @@ namespace LeoQuiz.Controllers
             this._passedQuizService = passedQuizService;
         }
 
-        //Після авторизації айді визначати всередині
-        [HttpGet("GetAll/{id}")]
-        public async Task<ActionResult<IEnumerable<PassedQuizDto>>> GetAllAsync(int id)
+        [HttpGet("GetAll")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<PassedQuizDto>>> GetAll()
         {
-            var result = await _passedQuizService.GetAll(id);
+            var result = await _passedQuizService.GetAll(User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Ok(result);
         }
 
@@ -38,15 +39,8 @@ namespace LeoQuiz.Controllers
         [HttpPost("PostPassedQuiz")]
         public async Task<ActionResult<PassedQuizDto>> PostQuiz(PassedQuizDto passedQuiz)
         {
-            try
-            {
-                await _passedQuizService.Insert(passedQuiz);
-                return Ok(passedQuiz);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _passedQuizService.Insert(passedQuiz);
+            return Ok(passedQuiz);
         }
 
         [HttpDelete("DeletePassedQuiz/{id}")]
@@ -55,8 +49,6 @@ namespace LeoQuiz.Controllers
             await _passedQuizService.Delete(id);
             return NoContent();
         }
-
-
 
     }
 }

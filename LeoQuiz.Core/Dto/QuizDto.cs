@@ -17,7 +17,7 @@ namespace LeoQuiz.Core.Dto
 
         public string QuizUrl { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         public List<QuestionDto> Questions { get; set; }
     }

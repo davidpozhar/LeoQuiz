@@ -35,7 +35,7 @@ namespace LeoQuiz.Services
         {
             var entity = await _questionRepository.GetById(Id);
             var dto = new QuestionDto();
-            return _mapper.Map(entity, dto);
+            return _mapper.Map<Question, QuestionDto>(entity);
             
         }
 
@@ -45,7 +45,7 @@ namespace LeoQuiz.Services
             var entity = _mapper.Map(questionDto, new Question());
             await _questionRepository.Insert(entity);
             await _questionRepository.SaveAsync();
-            return _mapper.Map(entity, questionDto);
+            return _mapper.Map<Question, QuestionDto>(entity);
         }
 
         public async Task<QuestionDto> Update(QuestionDto questionDto)
@@ -54,7 +54,7 @@ namespace LeoQuiz.Services
             var entity = _mapper.Map(questionDto, new Question());
             _questionRepository.Update(entity);
             await _questionRepository.SaveAsync();
-            return _mapper.Map(entity, questionDto);
+            return _mapper.Map<Question, QuestionDto>(entity);
         }
 
         public async Task Delete(int Id)

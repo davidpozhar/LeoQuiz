@@ -32,7 +32,7 @@ namespace LeoQuiz.Services
         public async Task<AnswerDto> GetById(int Id)
         {
             var entity = await _answerRepository.GetById(Id);
-            return _mapper.Map(entity, new AnswerDto());
+            return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
         public async Task<AnswerDto> Insert(AnswerDto answerDto)
@@ -41,7 +41,7 @@ namespace LeoQuiz.Services
             var entity = _mapper.Map(answerDto, new Answer());
             await _answerRepository.Insert(entity);
             await _answerRepository.SaveAsync();
-            return _mapper.Map(entity, answerDto);
+            return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
         public async Task<AnswerDto> Update(AnswerDto answerDto)
@@ -50,7 +50,7 @@ namespace LeoQuiz.Services
             var entity = _mapper.Map(answerDto, new Answer());
             _answerRepository.Update(entity);
             await _answerRepository.SaveAsync();
-            return _mapper.Map(entity, answerDto); ;
+            return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
         public async Task Delete(int Id)
