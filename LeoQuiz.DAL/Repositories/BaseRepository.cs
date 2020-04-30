@@ -47,12 +47,31 @@ namespace LeoQuiz.DAL.Repositories
 
         public void Save()
         {
+            UpdateSoftDeleteStatuses();
             _dbContext.SaveChanges();
         }
 
         public async Task SaveAsync()
         {
+            UpdateSoftDeleteStatuses();
             await _dbContext.SaveChangesAsync();
+        }
+
+        private void UpdateSoftDeleteStatuses()
+        {
+            foreach (var entry in _dbContext.ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.CurrentValues["isDeleted"] = false;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.CurrentValues["isDeleted"] = true;
+                        break;
+                }
+            }
         }
 
         private void NullChecked(TEntity entityToCheck)

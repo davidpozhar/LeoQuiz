@@ -19,13 +19,11 @@ namespace LeoQuiz.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager; 
         readonly IConfiguration _configuration;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
-            this._roleManager = roleManager;
             this._configuration = configuration;
         }
 
@@ -45,17 +43,16 @@ namespace LeoQuiz.Services
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                throw new FormatException("Bad password");
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                var userEntity = await _userManager.FindByEmailAsync(dto.Email);
+
+                await _userManager.AddToRoleAsync(user, "Admin");
+
+                return GetToken(userEntity);
             }
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            var userEntity = await _userManager.FindByEmailAsync(dto.Email);
-
-            await _userManager.AddToRoleAsync(user, "Admin");
-
-            return GetToken(userEntity);
+            return null;
         }
 
         public async Task<string> SignIn(UserLoginDto dto)
@@ -66,12 +63,12 @@ namespace LeoQuiz.Services
 
             if (!result.Succeeded)
             {
-                throw new FormatException("Bad password");
+                var userEntity = await _userManager.FindByEmailAsync(dto.Email);
+
+                return GetToken(userEntity);
             }
 
-            var userEntity = await _userManager.FindByEmailAsync(dto.Email);
-
-            return GetToken(userEntity);
+            return null;
         }
 
         public async Task Logout()
@@ -142,6 +139,5 @@ namespace LeoQuiz.Services
                 return new JwtSecurityTokenHandler().WriteToken(jwt);
             }
         }
-
     }
 }

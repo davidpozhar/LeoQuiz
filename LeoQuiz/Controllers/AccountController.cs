@@ -26,6 +26,11 @@ namespace LeoQuiz.Controllers
         public async Task<IActionResult> SignUp(UserRegisterDto dto)
         {
             var result = await _accountService.SignUp(dto);
+
+            if(result == null)
+            {
+                return BadRequest();
+            }
             return Ok(result);
         }
 
@@ -33,6 +38,11 @@ namespace LeoQuiz.Controllers
         public async Task<IActionResult> SignIn(UserLoginDto dto)
         {
             var result = await _accountService.SignIn(dto);
+
+            if (result == null)
+            {
+                return BadRequest();
+            }
             return Ok(result);
         }
 

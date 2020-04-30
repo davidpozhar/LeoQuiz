@@ -25,7 +25,6 @@ using NLog;
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LeoQuiz
@@ -43,89 +42,28 @@ namespace LeoQuiz
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowMyOrigin",
-                builder => builder.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod());
-            });
+            AddCors(services);
 
-            services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new LeoQuiz.Core.Mapper());
-            });
+            AddAutoMapper(services);
 
             services.AddMvc().AddFluentValidation();
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-
             services.AddDbContext<LeoQuizApiContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<LeoQuizApiContext>()
-                .AddRoleManager<RoleManager<IdentityRole>>();
+            AddIdentity(services);
 
-            RSA publicRsa = RSA.Create();
-            publicRsa.FromXmlFile(Path.Combine(Directory.GetCurrentDirectory(),
-                "Keys",
-                 this.Configuration.GetValue<String>("Tokens:PublicKey")
-                 ));
-            RsaSecurityKey signingKey = new RsaSecurityKey(publicRsa);
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(config =>
-            {
-                config.RequireHttpsMetadata = false;
-                config.SaveToken = true;
-                config.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    IssuerSigningKey = signingKey,
-                    ValidateAudience = true,
-                    ValidAudience = this.Configuration["Tokens:Audience"],
-                    ValidateIssuer = true,
-                    ValidIssuer = this.Configuration["Tokens:Issuer"],
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true
-                };
-            });
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequiredLength = 8;
-                options.Password.RequiredUniqueChars = 4;
-                options.Password.RequireNonAlphanumeric = false;
-                options.SignIn.RequireConfirmedAccount = false;
-                options.User.RequireUniqueEmail = true;
-            });
+            AddAuthentication(services);
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LeoQuiz API", Version = "v1" });
             });
 
-            services.AddTransient<IValidator<QuizDto>, QuizValidator>();
-            services.AddTransient<IValidator<QuestionDto>, QuestionValidator>();
-            services.AddTransient<IValidator<AnswerDto>, AnswerValidator>();
+            AddValidators(services);
 
+            AddServices(services);
 
-            services.AddScoped<IQuizService, QuizService>();
-            services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<IAnswerService, AnswerService>();
-            services.AddScoped<IPassedQuizService, PassedQuizService>();
-            services.AddScoped<IUserService, UserService>();
-
-            services.AddScoped<IQuizRepository, QuizRepository>();
-            services.AddScoped<IQuestionRepository, QuestionRepository>();
-            services.AddScoped<IAnswerRepository, AnswerRepository>();
-            services.AddScoped<IPassedQuizRepository, PassedQuizRepository>();
-            services.AddScoped<IUserRepository, UserRepository> ();
+            AddRepositories(services);
 
             services.AddSingleton<ILoggerService, LoggerService>();
 
@@ -176,5 +114,102 @@ namespace LeoQuiz
                 await RoleManager.CreateAsync(new IdentityRole("Interviewee"));
             }
         }
+
+        private void AddCors(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigin",
+                builder => builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
+
+            services.AddRouting(r => r.SuppressCheckForUnhandledSecurityMetadata = true);
+        }
+
+        private void AddAutoMapper(IServiceCollection services)
+        {
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new LeoQuiz.Core.Mapper());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+        }
+
+        private void AddIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<User, IdentityRole>()
+                    .AddEntityFrameworkStores<LeoQuizApiContext>()
+                    .AddRoleManager<RoleManager<IdentityRole>>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.User.RequireUniqueEmail = true;
+            });
+
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            RSA publicRsa = RSA.Create();
+            publicRsa.FromXmlFile(Path.Combine(Directory.GetCurrentDirectory(),
+                "Keys",
+                 this.Configuration.GetValue<String>("Tokens:PublicKey")
+                 ));
+            RsaSecurityKey signingKey = new RsaSecurityKey(publicRsa);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(config =>
+            {
+                config.RequireHttpsMetadata = false;
+                config.SaveToken = true;
+                config.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    IssuerSigningKey = signingKey,
+                    ValidateAudience = true,
+                    ValidAudience = this.Configuration["Tokens:Audience"],
+                    ValidateIssuer = true,
+                    ValidIssuer = this.Configuration["Tokens:Issuer"],
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                };
+            });
+        }
+
+        private void AddValidators(IServiceCollection services)
+        {
+            services.AddTransient<IValidator<QuizDto>, QuizValidator>();
+            services.AddTransient<IValidator<QuestionDto>, QuestionValidator>();
+            services.AddTransient<IValidator<AnswerDto>, AnswerValidator>();
+        }
+
+        private void AddServices(IServiceCollection services)
+        {
+            services.AddScoped<IQuizService, QuizService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddScoped<IPassedQuizService, PassedQuizService>();
+            services.AddScoped<IUserService, UserService>();
+        }
+
+        private void AddRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IQuizRepository, QuizRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IPassedQuizRepository, PassedQuizRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+        }
+
     }
 }
