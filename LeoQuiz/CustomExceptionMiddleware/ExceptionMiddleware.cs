@@ -44,7 +44,7 @@ namespace LeoQuiz.CustomExceptionMiddleware
                         context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
                         errorDetails.StatusCode = 404;
-                        errorDetails.Message = "Not Found.";
+                        errorDetails.Message = exception.Message;
 
                         break;
                     }
@@ -53,7 +53,7 @@ namespace LeoQuiz.CustomExceptionMiddleware
                         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                         errorDetails.StatusCode = 400;
-                        errorDetails.Message = "Internal Server Error.";
+                        errorDetails.Message = exception.Message;
 
                         break;
                     }
@@ -63,7 +63,7 @@ namespace LeoQuiz.CustomExceptionMiddleware
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                         errorDetails.StatusCode = 500;
-                        errorDetails.Message = "Internal Server Error.";
+                        errorDetails.Message = exception.Message;
 
                         break;
                     }

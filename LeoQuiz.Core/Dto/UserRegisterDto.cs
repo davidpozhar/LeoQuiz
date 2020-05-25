@@ -15,8 +15,5 @@
 
         public string Password { get; set; }
 
-        public int UserRoleId { get; set; }
-
-
     }
 }

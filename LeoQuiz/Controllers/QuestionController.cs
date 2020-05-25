@@ -22,14 +22,14 @@ namespace LeoQuiz.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<QuestionDto>>> GetQuestions()
         {
-            var result = await _questionService.GetAll();
+            var result = await _questionService.GetAll().ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<QuestionDto>> GetQuestion(int id)
         {
-            var result = await _questionService.GetById(id);
+            var result = await _questionService.GetById(id).ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -41,7 +41,7 @@ namespace LeoQuiz.Controllers
                 return BadRequest();
             }
 
-            await _questionService.Insert(Question);
+            await _questionService.Insert(Question).ConfigureAwait(false);
             return Ok(Question);
 
         }
@@ -49,14 +49,14 @@ namespace LeoQuiz.Controllers
         [HttpPut]
         public async Task<ActionResult<QuestionDto>> PutQuestion(QuestionDto Question)
         {
-            var result = await _questionService.Update(Question);
+            var result = await _questionService.Update(Question).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteQuestion(int id)
         {
-            await _questionService.Delete(id);
+            await _questionService.Delete(id).ConfigureAwait(false);
             return NoContent();
         }
     }

@@ -26,12 +26,12 @@ namespace LeoQuiz.Services
 
         public async Task<List<AnswerDto>> GetAll()
         {
-            return await _answerRepository.GetAll().Select(el => _mapper.Map(el, new AnswerDto())).ToListAsync();
+            return await _answerRepository.GetAll().Select(el => _mapper.Map(el, new AnswerDto())).ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<AnswerDto> GetById(int Id)
         {
-            var entity = await _answerRepository.GetById(Id);
+            var entity = await _answerRepository.GetById(Id).ConfigureAwait(false);
             return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
@@ -39,8 +39,8 @@ namespace LeoQuiz.Services
         {
             Validation(answerDto);
             var entity = _mapper.Map(answerDto, new Answer());
-            await _answerRepository.Insert(entity);
-            await _answerRepository.SaveAsync();
+            await _answerRepository.Insert(entity).ConfigureAwait(false);
+            await _answerRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
@@ -49,14 +49,14 @@ namespace LeoQuiz.Services
             Validation(answerDto);
             var entity = _mapper.Map(answerDto, new Answer());
             _answerRepository.Update(entity);
-            await _answerRepository.SaveAsync();
+            await _answerRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Answer, AnswerDto>(entity);
         }
 
         public async Task Delete(int Id)
         {
-            await _answerRepository.Delete(Id);
-            await _answerRepository.SaveAsync();
+            await _answerRepository.Delete(Id).ConfigureAwait(false);
+            await _answerRepository.SaveAsync().ConfigureAwait(false);
         }
 
         private void Validation(AnswerDto dto)

@@ -40,7 +40,7 @@ namespace LeoQuiz
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public async void ConfigureServices(IServiceCollection services)
         {
             AddCors(services);
 
@@ -68,6 +68,7 @@ namespace LeoQuiz
             services.AddSingleton<ILoggerService, LoggerService>();
 
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,11 +108,11 @@ namespace LeoQuiz
         {
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin").ConfigureAwait(false);
             if (!roleCheck)
             {
-                await RoleManager.CreateAsync(new IdentityRole("Admin"));
-                await RoleManager.CreateAsync(new IdentityRole("Interviewee"));
+                await RoleManager.CreateAsync(new IdentityRole("Admin")).ConfigureAwait(false);
+                await RoleManager.CreateAsync(new IdentityRole("Interviewee")).ConfigureAwait(false);
             }
         }
 
@@ -200,6 +201,7 @@ namespace LeoQuiz
             services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<IPassedQuizService, PassedQuizService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
         }
 
         private void AddRepositories(IServiceCollection services)

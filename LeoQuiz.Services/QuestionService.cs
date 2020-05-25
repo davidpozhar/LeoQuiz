@@ -28,12 +28,12 @@ namespace LeoQuiz.Services
         {
             return await _questionRepository.GetAll()
                 .Select(el => _mapper.Map(el, new QuestionDto()))
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<QuestionDto> GetById(int Id)
         {
-            var entity = await _questionRepository.GetById(Id);
+            var entity = await _questionRepository.GetById(Id).ConfigureAwait(false);
             var dto = new QuestionDto();
             return _mapper.Map<Question, QuestionDto>(entity);
             
@@ -43,8 +43,8 @@ namespace LeoQuiz.Services
         {
             Validation(questionDto);
             var entity = _mapper.Map(questionDto, new Question());
-            await _questionRepository.Insert(entity);
-            await _questionRepository.SaveAsync();
+            await _questionRepository.Insert(entity).ConfigureAwait(false);
+            await _questionRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Question, QuestionDto>(entity);
         }
 
@@ -53,14 +53,14 @@ namespace LeoQuiz.Services
             Validation(questionDto);
             var entity = _mapper.Map(questionDto, new Question());
             _questionRepository.Update(entity);
-            await _questionRepository.SaveAsync();
+            await _questionRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Question, QuestionDto>(entity);
         }
 
         public async Task Delete(int Id)
         {
-            await _questionRepository.Delete(Id);
-            await _questionRepository.SaveAsync();
+            await _questionRepository.Delete(Id).ConfigureAwait(false);
+            await _questionRepository.SaveAsync().ConfigureAwait(false);
         }
 
         private void Validation(QuestionDto dto)

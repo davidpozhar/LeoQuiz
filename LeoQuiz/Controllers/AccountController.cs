@@ -25,7 +25,7 @@ namespace LeoQuiz.Controllers
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp(UserRegisterDto dto)
         {
-            var result = await _accountService.SignUp(dto);
+            var result = await _accountService.SignUp(dto).ConfigureAwait(false);
 
             if(result == null)
             {
@@ -37,7 +37,7 @@ namespace LeoQuiz.Controllers
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(UserLoginDto dto)
         {
-            var result = await _accountService.SignIn(dto);
+            var result = await _accountService.SignIn(dto).ConfigureAwait(false);
 
             if (result == null)
             {
@@ -46,10 +46,10 @@ namespace LeoQuiz.Controllers
             return Ok(result);
         }
 
-        [HttpGet("Logout/{id}")]
+        [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
-            await _accountService.Logout();
+            await _accountService.Logout().ConfigureAwait(false);
             return Ok();
         }
 
@@ -59,7 +59,7 @@ namespace LeoQuiz.Controllers
         {
             var userName =  User.Claims.Where(c => c.Properties.ContainsKey("unique_name")).Select(c => c.Value).FirstOrDefault();
 
-            var result = await _accountService.RefreshToken(userName);
+            var result = await _accountService.RefreshToken(userName).ConfigureAwait(false);
             return Ok();
         }
     }

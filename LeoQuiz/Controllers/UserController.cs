@@ -1,5 +1,6 @@
 ﻿using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.Core.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace LeoQuiz.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            var result = await _userService.GetAll();
+            var result = await _userService.GetAll().ConfigureAwait(false);
             return Ok(result);
         }
 
@@ -34,31 +35,33 @@ namespace LeoQuiz.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUserById(string id)
+        [HttpGet("GetCurrentUser")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetUserById()
         {
-            var result = await _userService.GetById(id);
+            var id = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _userService.GetById(id).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<UserDto>> PostUser(UserDto User)
         {
-            await _userService.Insert(User);
+            await _userService.Insert(User).ConfigureAwait(false);
             return Ok(User);
         }
 
         [HttpPut]
         public async Task<ActionResult<UserDto>> PutUser(UserDto User)
         {
-            var result = await _userService.Update(User);
+            var result = await _userService.Update(User).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(string id)
         {
-            await _userService.Delete(id);
+            await _userService.Delete(id).ConfigureAwait(false);
             return NoContent();
         }
     }

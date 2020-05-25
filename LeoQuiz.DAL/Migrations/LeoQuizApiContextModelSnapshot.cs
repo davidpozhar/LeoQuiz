@@ -36,6 +36,9 @@ namespace LeoQuiz.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
@@ -61,6 +64,9 @@ namespace LeoQuiz.DAL.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -110,6 +116,9 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<TimeSpan>("TimeLimit")
                         .HasColumnType("time");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuizId");
@@ -144,26 +153,14 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Quiz");
-                });
-
-            modelBuilder.Entity("LeoQuiz.Core.Entities.UserRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -384,8 +381,6 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<int>("UserRoleId")
                         .HasColumnType("int");
 
-                    b.HasIndex("UserRoleId");
-
                     b.HasDiscriminator().HasValue("User");
                 });
 
@@ -496,16 +491,6 @@ namespace LeoQuiz.DAL.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LeoQuiz.Core.Entities.User", b =>
-                {
-                    b.HasOne("LeoQuiz.Core.Entities.UserRole", "UserRole")
-                        .WithMany("Users")
-                        .HasForeignKey("UserRoleId")
-                        .HasConstraintName("User_UserRole")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

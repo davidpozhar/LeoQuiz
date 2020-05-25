@@ -18,18 +18,26 @@ namespace LeoQuiz.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager; 
+        private readonly RoleManager<IdentityRole> _roleManager;
         readonly IConfiguration _configuration;
 
-        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             this._userManager = userManager;
             this._signInManager = signInManager;
+            this._roleManager = roleManager;
             this._configuration = configuration;
         }
 
         public async Task<string> SignUp(UserRegisterDto dto)
         {
-            await IsEmalInUse(dto.Email);
+            var roleCheck = await _roleManager.RoleExistsAsync("Admin").ConfigureAwait(false);
+            if (!roleCheck)
+            {
+                await _roleManager.CreateAsync(new IdentityRole("Admin")).ConfigureAwait(false);
+            }
+
+            await IsEmalInUse(dto.Email).ConfigureAwait(false);
 
             var user = new User
             {
@@ -37,18 +45,17 @@ namespace LeoQuiz.Services
                 Email = dto.Email,
                 Name = dto.Name,
                 Surname = dto.Surname,
-                UserRoleId = dto.UserRoleId,
                 Age = dto.Age
             };
 
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            var result = await _userManager.CreateAsync(user, dto.Password).ConfigureAwait(false);
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                var userEntity = await _userManager.FindByEmailAsync(dto.Email);
+                await _signInManager.SignInAsync(user, isPersistent: false).ConfigureAwait(false);
+                var userEntity = await _userManager.FindByEmailAsync(dto.Email).ConfigureAwait(false);
 
-                await _userManager.AddToRoleAsync(user, "Admin");
+                await _userManager.AddToRoleAsync(user, "Admin").ConfigureAwait(false);
 
                 return GetToken(userEntity);
             }
@@ -57,13 +64,13 @@ namespace LeoQuiz.Services
 
         public async Task<string> SignIn(UserLoginDto dto)
         {
-            await IsEmailNull(dto.Email);
+            await IsEmailNull(dto.Email).ConfigureAwait(false);
 
-            var result = await _signInManager.PasswordSignInAsync(dto.Email, dto.Password, true, false);
+            var result = await _signInManager.PasswordSignInAsync(dto.Email, dto.Password, true, false).ConfigureAwait(false);
 
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                var userEntity = await _userManager.FindByEmailAsync(dto.Email);
+                var userEntity = await _userManager.FindByEmailAsync(dto.Email).ConfigureAwait(false);
 
                 return GetToken(userEntity);
             }
@@ -73,19 +80,19 @@ namespace LeoQuiz.Services
 
         public async Task Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync().ConfigureAwait(false);
 
         }
 
         public async Task<string> RefreshToken(string name)
         {
-            var user = await _userManager.FindByNameAsync(name);
+            var user = await _userManager.FindByNameAsync(name).ConfigureAwait(false);
             return GetToken(user);
         }
 
         private async Task IsEmalInUse(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
 
             if (user != null)
             {
@@ -96,7 +103,7 @@ namespace LeoQuiz.Services
 
         private async Task IsEmailNull(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
 
             if (user == null)
             {
@@ -136,7 +143,8 @@ namespace LeoQuiz.Services
                     issuer: this._configuration.GetValue<String>("Tokens:Issuer")
                     );
 
-                return new JwtSecurityTokenHandler().WriteToken(jwt);
+                var result = new JwtSecurityTokenHandler().WriteToken(jwt);
+                return result;
             }
         }
     }

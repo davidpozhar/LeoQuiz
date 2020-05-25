@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LeoQuiz.DAL.Migrations
 {
-    public partial class Identity : Migration
+    public partial class CreateDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,40 +19,6 @@ namespace LeoQuiz.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRole",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRole", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,10 +49,25 @@ namespace LeoQuiz.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetRoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "User_UserRole",
-                        column: x => x.UserRoleId,
-                        principalTable: "UserRole",
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -187,7 +168,8 @@ namespace LeoQuiz.DAL.Migrations
                     MaxAttempts = table.Column<int>(nullable: false),
                     PassGrade = table.Column<int>(nullable: false),
                     QuizUrl = table.Column<string>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    isDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,7 +190,8 @@ namespace LeoQuiz.DAL.Migrations
                     Grade = table.Column<int>(nullable: false),
                     PassDate = table.Column<DateTime>(nullable: false),
                     QuizId = table.Column<int>(nullable: false),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true),
+                    isDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -235,7 +218,8 @@ namespace LeoQuiz.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(nullable: false),
                     TimeLimit = table.Column<TimeSpan>(nullable: false),
-                    QuizId = table.Column<int>(nullable: false)
+                    QuizId = table.Column<int>(nullable: false),
+                    isDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -256,7 +240,8 @@ namespace LeoQuiz.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(nullable: false),
                     IsCorrect = table.Column<bool>(nullable: false),
-                    QuestionId = table.Column<int>(nullable: false)
+                    QuestionId = table.Column<int>(nullable: false),
+                    isDeleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,11 +309,6 @@ namespace LeoQuiz.DAL.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_UserRoleId",
-                table: "AspNetUsers",
-                column: "UserRoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
@@ -410,9 +390,6 @@ namespace LeoQuiz.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "UserRole");
         }
     }
 }

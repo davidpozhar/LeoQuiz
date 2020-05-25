@@ -28,16 +28,15 @@ namespace LeoQuiz.Extentions
                         if(contextFeature?.Error is NullReferenceException)
                         {
                             errorDetails.StatusCode = 404;
-                            errorDetails.Message = "Internal Server Error.";
-                            
+                            errorDetails.Message = contextFeature.Error.Message;
                         }
 
                         if (contextFeature?.Error is Exception)
                         {
                             errorDetails.StatusCode = 500;
-                            errorDetails.Message = "Internal Server Error.";
-
+                            errorDetails.Message = errorDetails.Message = contextFeature.Error.Message;
                         }
+
 
                         logger.LogError($"Something went wrong: {contextFeature.Error}");
                         
