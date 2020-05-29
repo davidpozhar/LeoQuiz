@@ -3,6 +3,7 @@ using LeoQuiz.Core.Abstractions.Repositories;
 using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.Core.Dto;
 using LeoQuiz.Core.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,15 @@ namespace LeoQuiz.Services
     {
         private readonly IUserRepository _userRepository;
 
+        private readonly UserManager<User> _userManager;
+
         private readonly IMapper _mapper;
 
-        public UserService(IMapper mapper, IUserRepository userRepository)
+        public UserService(IMapper mapper, IUserRepository userRepository, UserManager<User> userManager)
         {
             this._mapper = mapper;
             this._userRepository = userRepository;
+            this._userManager = userManager;
         }
 
         public async Task<List<UserDto>> GetAll()
@@ -29,7 +33,8 @@ namespace LeoQuiz.Services
 
         public async Task<UserDto> GetById(string Id)
         {
-            var entity = await _userRepository.GetById(Id).ConfigureAwait(false);
+            var entity = await _userManager.FindByEmailAsync(Id).ConfigureAwait(false); 
+            //var entity = await _userRepository.GetById(Id).ConfigureAwait(false);
             return _mapper.Map<User, UserDto>(entity);
         }
 

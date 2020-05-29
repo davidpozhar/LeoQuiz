@@ -36,10 +36,10 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet("GetCurrentUser")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<UserDto>> GetUserById()
         {
-            var id = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var id = "leobit@gmail.com";
             var result = await _userService.GetById(id).ConfigureAwait(false);
             return Ok(result);
         }

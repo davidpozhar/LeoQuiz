@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LeoQuiz.Services
@@ -45,7 +46,8 @@ namespace LeoQuiz.Services
                 Email = dto.Email,
                 Name = dto.Name,
                 Surname = dto.Surname,
-                Age = dto.Age
+                Age = dto.Age,
+                UserRoleId = 1
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password).ConfigureAwait(false);
@@ -116,14 +118,8 @@ namespace LeoQuiz.Services
         {
             var utcNow = DateTime.UtcNow;
 
-            using (RSA privateRsa = RSA.Create())
-            {
-                privateRsa.FromXmlFile(Path.Combine(Directory.GetCurrentDirectory(),
-                                "Keys",
-                                 this._configuration.GetValue<String>("Tokens:PrivateKey")
-                                 ));
-                var privateKey = new RsaSecurityKey(privateRsa);
-                SigningCredentials signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+                var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel"));
+                SigningCredentials signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
 
 
                 var claims = new Claim[]
@@ -145,7 +141,7 @@ namespace LeoQuiz.Services
 
                 var result = new JwtSecurityTokenHandler().WriteToken(jwt);
                 return result;
-            }
+            
         }
     }
 }
