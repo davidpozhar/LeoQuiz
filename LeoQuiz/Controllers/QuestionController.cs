@@ -26,6 +26,13 @@ namespace LeoQuiz.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetCurrentQuestions/{id}")]
+        public async Task<ActionResult<IEnumerable<QuestionDto>>> GetCurrentQuestions(int id)
+        {
+            var result = await _questionService.GetAll(id).ConfigureAwait(false);
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<QuestionDto>> GetQuestion(int id)
         {

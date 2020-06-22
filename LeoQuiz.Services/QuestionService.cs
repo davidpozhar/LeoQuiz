@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using LeoQuiz.Core.Abstractions.Repositories;
 using LeoQuiz.Core.Abstractions.Services;
@@ -31,12 +32,19 @@ namespace LeoQuiz.Services
                 .ToListAsync().ConfigureAwait(false);
         }
 
+        public async Task<List<QuestionDto>> GetAll(int quizId)
+        {
+            return await _questionRepository.GetAll().Where(q=>q.QuizId == quizId)
+                .Select(el => _mapper.Map(el, new QuestionDto()))
+                .ToListAsync().ConfigureAwait(false);
+        }
+
         public async Task<QuestionDto> GetById(int Id)
         {
-            var entity = await _questionRepository.GetById(Id).ConfigureAwait(false);
-            var dto = new QuestionDto();
-            return _mapper.Map<Question, QuestionDto>(entity);
-            
+            return await _questionRepository.GetAll()
+                .Where(q => q.Id == Id)
+                .ProjectTo<QuestionDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync().ConfigureAwait(false);           
         }
 
         public async Task<QuestionDto> Insert(QuestionDto questionDto)

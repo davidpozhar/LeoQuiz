@@ -8,6 +8,8 @@ namespace LeoQuiz.Core.Abstractions.Services
     {
         public Task<List<QuestionDto>> GetAll();
 
+        public Task<List<QuestionDto>> GetAll(int Id);
+
         public Task<QuestionDto> GetById(int Id);
 
         public Task<QuestionDto> Insert(QuestionDto questionDto);

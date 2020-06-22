@@ -47,13 +47,18 @@ namespace LeoQuiz.DAL.Repositories
 
         public void Save()
         {
+            _dbContext.SaveChanges();
+        }
+
+        public void SaveWithSoft()
+        {
             UpdateSoftDeleteStatuses();
             _dbContext.SaveChanges();
+
         }
 
         public async Task SaveAsync()
         {
-            UpdateSoftDeleteStatuses();
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 

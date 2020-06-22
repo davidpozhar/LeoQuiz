@@ -55,6 +55,7 @@ namespace LeoQuiz.Controllers
             {
                 return BadRequest();
             }
+            quiz.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _quizService.Insert(quiz).ConfigureAwait(false);
             return Ok(quiz);
         }

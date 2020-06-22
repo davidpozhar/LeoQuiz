@@ -118,30 +118,27 @@ namespace LeoQuiz.Services
         {
             var utcNow = DateTime.UtcNow;
 
-                var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel"));
-                SigningCredentials signingCredentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
+            var claims = new Claim[]
+            {
+                        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                        new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, utcNow.ToString())
+            };
 
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel"));
 
-                var claims = new Claim[]
-                {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, utcNow.ToString())
-                };
+            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+            var jwt = new JwtSecurityToken(
+                signingCredentials: signingCredentials,
+                claims: claims,
+                notBefore: utcNow,
+                expires: utcNow.AddSeconds(this._configuration.GetValue<int>("Tokens:Lifetime")),
+                audience: this._configuration.GetValue<String>("Tokens:Audience"),
+                issuer: this._configuration.GetValue<String>("Tokens:Issuer")
+                );
 
-                var jwt = new JwtSecurityToken(
-                    signingCredentials: signingCredentials,
-                    claims: claims,
-                    notBefore: utcNow,
-                    expires: utcNow.AddSeconds(this._configuration.GetValue<int>("Tokens:Lifetime")),
-                    audience: this._configuration.GetValue<String>("Tokens:Audience"),
-                    issuer: this._configuration.GetValue<String>("Tokens:Issuer")
-                    );
-
-                var result = new JwtSecurityTokenHandler().WriteToken(jwt);
-                return result;
-            
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
     }
 }

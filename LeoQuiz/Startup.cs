@@ -12,6 +12,7 @@ using LeoQuiz.Extentions;
 using LeoQuiz.Services;
 using LeoQuiz.Services.Extentions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +26,7 @@ using NLog;
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LeoQuiz
@@ -51,6 +53,11 @@ namespace LeoQuiz
             services.AddDbContext<LeoQuizApiContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             AddIdentity(services);
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+            });
 
             AddAuthentication(services);
 
@@ -159,13 +166,7 @@ namespace LeoQuiz
 
         private void AddAuthentication(IServiceCollection services)
         {
-            RSA publicRsa = RSA.Create();
-            publicRsa.FromXmlFile(Path.Combine(Directory.GetCurrentDirectory(),
-                "Keys",
-                 this.Configuration.GetValue<String>("Tokens:PublicKey")
-                 ));
-            RsaSecurityKey signingKey = new RsaSecurityKey(publicRsa);
-
+            SymmetricSecurityKey privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel marvel"));
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -176,13 +177,11 @@ namespace LeoQuiz
                 config.SaveToken = true;
                 config.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    IssuerSigningKey = signingKey,
-                    ValidateAudience = true,
-                    ValidAudience = this.Configuration["Tokens:Audience"],
-                    ValidateIssuer = true,
-                    ValidIssuer = this.Configuration["Tokens:Issuer"],
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = privateKey,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = false,
                 };
             });
         }

@@ -10,9 +10,6 @@ namespace LeoQuiz.Core.Validators
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .WithMessage("Mane is empty");
-            RuleFor(x => x.UserId)
-                .NotEmpty()
-                .WithMessage("Admin id is empty");
             RuleFor(x => x.MaxAttempts)
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Max attempts is less than 1");

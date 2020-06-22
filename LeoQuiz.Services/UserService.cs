@@ -33,8 +33,7 @@ namespace LeoQuiz.Services
 
         public async Task<UserDto> GetById(string Id)
         {
-            var entity = await _userManager.FindByEmailAsync(Id).ConfigureAwait(false); 
-            //var entity = await _userRepository.GetById(Id).ConfigureAwait(false);
+            var entity = await _userRepository.GetAll().Where(user => user.Email == Id).FirstOrDefaultAsync().ConfigureAwait(false);
             return _mapper.Map<User, UserDto>(entity);
         }
 
