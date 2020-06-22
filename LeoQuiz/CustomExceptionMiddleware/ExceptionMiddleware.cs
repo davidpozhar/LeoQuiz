@@ -37,25 +37,39 @@ namespace LeoQuiz.CustomExceptionMiddleware
 
             var errorDetails = new ErrorDetails();
 
-            //Замінити на світч при можливості - пошукати
-            if (exception is NullReferenceException)
+            switch (exception)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                case NullReferenceException e:
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 
-                errorDetails.StatusCode = 404;
-                errorDetails.Message = "Not Found.";
+                        errorDetails.StatusCode = 404;
+                        errorDetails.Message = exception.Message;
 
-            } else if (exception is Exception)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        break;
+                    }
+                case FormatException ex:
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-                errorDetails.StatusCode = 500;
-                errorDetails.Message = "Internal Server Error.";
+                        errorDetails.StatusCode = 400;
+                        errorDetails.Message = exception.Message;
+
+                        break;
+                    }
+
+                case Exception e:
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                        errorDetails.StatusCode = 500;
+                        errorDetails.Message = exception.Message;
+
+                        break;
+                    }
             }
 
             return context.Response.WriteAsync(errorDetails.ToString());
-
-
         }
     }
 }

@@ -30,14 +30,14 @@ namespace LeoQuiz.Services
         }
 
         //return all passedquiz with user and answers (for admin)
-        public async Task<List<PassedQuizDto>> GetAll(int Id)
+        public async Task<List<PassedQuizDto>> GetAll(string Id)
         {
             return await _passedquizRepository.GetAll()
                 .Include(pasquiz => pasquiz.PassedQuizAnswers)
                 .Include(pasquiz => pasquiz.User)
                 .Where(pasquiz => pasquiz.Quiz.UserId == Id)
                 .ProjectTo<PassedQuizDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
         }
 
         //return full info about passed quiz with correct answers
@@ -47,16 +47,11 @@ namespace LeoQuiz.Services
                .Include(passquiz => passquiz.User)
                .Where(passquiz => passquiz.Id == Id)
                .ProjectTo<PassedQuizFullDto>(_mapper.ConfigurationProvider)
-               .FirstOrDefaultAsync();
+               .FirstOrDefaultAsync().ConfigureAwait(false);
 
-            if (result != null)
-            {
-                return result;
+            if (result == null) throw new System.NullReferenceException();
 
-            } else
-            {
-                throw new System.NullReferenceException();
-            }
+            return result;
         }
 
         public async Task<PassedQuizDto> Insert(PassedQuizDto passedQuizDto)
@@ -67,15 +62,15 @@ namespace LeoQuiz.Services
             _mapper.Map(passedQuizDto, entity);
             entity.User.UserRoleId = 2;
             entity.Grade = CalculateGrade(entity.PassedQuizAnswers, entity.QuizId);
-            await _passedquizRepository.Insert(entity);
-            await _passedquizRepository.SaveAsync();
-            return _mapper.Map(entity, passedQuizDto);
+            await _passedquizRepository.Insert(entity).ConfigureAwait(false);
+            await _passedquizRepository.SaveAsync().ConfigureAwait(false);
+            return _mapper.Map<PassedQuiz, PassedQuizDto>(entity);
         }
 
         public async Task Delete(int Id)
         {
-            await _passedquizRepository.Delete(Id);
-            await _passedquizRepository.SaveAsync();
+            await _passedquizRepository.Delete(Id).ConfigureAwait(false);
+            await _passedquizRepository.SaveAsync().ConfigureAwait(false);
         }
 
         private void CheckPassedQuiz(PassedQuizDto dto)

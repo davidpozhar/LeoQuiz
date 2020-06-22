@@ -2,8 +2,8 @@
 using LeoQuiz.Core.Dto;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace LeoQuiz.Controllers
@@ -21,74 +21,57 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet("GetAllTest")]
-        public async Task<ActionResult<IEnumerable<QuizDto>>> GetAllTestAsync()
+        public async Task<ActionResult<IEnumerable<QuizDto>>> GetAllTest()
         {
-            try
-            {
-                var result = await _quizService.GetAll(3);
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _quizService.GetAll("string").ConfigureAwait(false);
+            return Ok(result);
         }
 
-        //Після авторизації айді визначати всередині
-        [HttpGet("GetAll/{id}")]
-        public async Task<ActionResult<IEnumerable<QuizInfoDto>>> GetAllAsync(int id)
+        [HttpGet("GetAll")]
+        public async Task<ActionResult<IEnumerable<QuizInfoDto>>> GetAll()
         {
-            try
-            {
-                var result = await _quizService.GetAllInfo(id);
-                return Ok(result);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            var result = await _quizService.GetAllInfo(User.FindFirstValue(ClaimTypes.NameIdentifier)).ConfigureAwait(false);
+            return Ok(result);
         }
 
         [HttpGet("GetQuizById/{id}")]
         public async Task<ActionResult<IEnumerable<QuizDto>>> GetQuizById(int id)
         {
-                var result = await _quizService.GetById(id);
-                return Ok(result);
+            var result = await _quizService.GetById(id).ConfigureAwait(false);
+            return Ok(result);
         }
 
         [HttpGet("GetQuizViewById/{id}")]
-        public async Task<ActionResult<IEnumerable<QuizViewDto>>> GetQuizViewByIdAsync(int id)
+        public async Task<ActionResult<IEnumerable<QuizViewDto>>> GetQuizViewById(int id)
         {
-                var result = await _quizService.GetViewById(id);
-                return Ok(result);
+            var result = await _quizService.GetViewById(id).ConfigureAwait(false);
+            return Ok(result);
         }
 
         [HttpPost("PostQuiz")]
         public async Task<ActionResult<QuizDto>> PostQuiz(QuizDto quiz)
         {
-            try
+            if(!ModelState.IsValid)
             {
-                await _quizService.Insert(quiz);
-                return Ok(quiz);
+                return BadRequest();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            quiz.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _quizService.Insert(quiz).ConfigureAwait(false);
+            return Ok(quiz);
         }
 
 
-        [HttpPut("PutQuiz/{id}")]
-        public async Task<ActionResult<QuizDto>> PutQuizAsync(int id, QuizDto quiz)
+        [HttpPut("PutQuiz")]
+        public async Task<ActionResult<QuizDto>> PutQuiz( QuizDto quiz)
         {
-            var result = await _quizService.Update(quiz);
+            var result = await _quizService.Update(quiz).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpDelete("DeleteQuiz/{id}")]
         public async Task<ActionResult> DeleteQuiz(int id)
         {
-            await _quizService.Delete(id);
+            await _quizService.Delete(id).ConfigureAwait(false);
             return NoContent();
         }
     }

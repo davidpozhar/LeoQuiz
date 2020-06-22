@@ -8,9 +8,9 @@ namespace LeoQuiz.Core.Abstractions.Services
     {
         public Task<List<QuizDto>> GetAll();
 
-        public Task<List<QuizDto>> GetAll(int Id);
+        public Task<List<QuizDto>> GetAll(string Id);
 
-        public Task<List<QuizInfoDto>> GetAllInfo(int Id);
+        public Task<List<QuizInfoDto>> GetAllInfo(string Id);
 
         public Task<QuizDto> GetById(int Id);
 

@@ -1,9 +1,10 @@
 ﻿using LeoQuiz.Core.Abstractions.Services;
 using LeoQuiz.Core.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace LeoQuiz.Controllers
@@ -21,51 +22,46 @@ namespace LeoQuiz.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsersAsync()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            var result = await _userService.GetAll();
+            var result = await _userService.GetAll().ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpGet("GetAllUsers")]
         public ActionResult<IEnumerable<UserDto>> GetAllUsers()
         {
-            var result = _userService.GetAllInterviewees(3);
+            var result = _userService.GetAllInterviewees(User.FindFirstValue(ClaimTypes.NameIdentifier));
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUserById(int id)
+        [HttpGet("GetCurrentUser")]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetUserById()
         {
-            var result = await _userService.GetById(id);
+            var id = HttpContext.User.Identity.Name;
+            var result = await _userService.GetById(id).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<ActionResult<UserDto>> PostUser(UserDto User)
         {
-            try
-            {
-                await _userService.Insert(User);
-                return Ok(User);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            await _userService.Insert(User).ConfigureAwait(false);
+            return Ok(User);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<UserDto>> PutUserAsync(int id, UserDto User)
+        [HttpPut]
+        public async Task<ActionResult<UserDto>> PutUser(UserDto User)
         {
-            var result = await _userService.Update(User);
+            var result = await _userService.Update(User).ConfigureAwait(false);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
-            await _userService.Delete(id);
+            await _userService.Delete(id).ConfigureAwait(false);
             return NoContent();
         }
     }

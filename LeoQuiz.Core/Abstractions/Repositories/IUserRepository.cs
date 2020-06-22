@@ -2,7 +2,7 @@
 
 namespace LeoQuiz.Core.Abstractions.Repositories
 {
-    public interface IUserRepository : IBaseRepository<User, int>
+    public interface IUserRepository : IBaseRepository<User, string>
     {
     }
 }

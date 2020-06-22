@@ -7,10 +7,6 @@ namespace LeoQuiz.Core.Validators
     {
         public QuestionValidator()
         {
-            RuleFor(x => x.QuizId)
-                .NotEmpty()
-                .WithMessage("Quiz id is empty");
-
             RuleFor(x => x.Text)
                 .NotEmpty()
                 .WithMessage("Text of question is empty");

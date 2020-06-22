@@ -1,9 +1,10 @@
 ﻿using LeoQuiz.Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeoQuiz.DAL
 {
-    public class LeoQuizApiContext : DbContext
+    public class LeoQuizApiContext : IdentityDbContext
     {
         public DbSet<User> User { get; set; }
 
@@ -15,8 +16,8 @@ namespace LeoQuiz.DAL
 
         public DbSet<Quiz> Quiz { get; set; }
 
-        public DbSet<PassedQuizAnswer> PassedQuizAnswer { get; set;
-        }
+        public DbSet<PassedQuizAnswer> PassedQuizAnswer { get; set; }
+
         public LeoQuizApiContext(DbContextOptions op) : base(op)
         {
 
@@ -44,6 +45,9 @@ namespace LeoQuiz.DAL
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.Name).IsRequired();
                 entity.Property(e => e.QuizUrl).IsRequired();
+
+               entity.Property<bool>("isDeleted");
+               entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -54,6 +58,10 @@ namespace LeoQuiz.DAL
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.Text).IsRequired();
+
+                entity.Property<bool>("isDeleted");
+                entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
             });
 
             modelBuilder.Entity<PassedQuiz>(entity =>
@@ -72,6 +80,10 @@ namespace LeoQuiz.DAL
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.PassDate).IsRequired();
                 entity.Property(e => e.QuizId).IsRequired();
+
+                entity.Property<bool>("isDeleted");
+                entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
             });
 
             modelBuilder.Entity<Answer>(entity =>
@@ -85,15 +97,13 @@ namespace LeoQuiz.DAL
                 entity.Property(e => e.Text).IsRequired();
                 entity.Property(e => e.IsCorrect).IsRequired();
                 entity.Property(e => e.QuestionId).IsRequired();
+
+                entity.Property<bool>("isDeleted");
+                entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
             });
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasOne(e => e.UserRole)
-                .WithMany(e => e.Users)
-                .HasForeignKey(e => e.UserRoleId)
-                .HasConstraintName("User_UserRole");
-            });
+            base.OnModelCreating(modelBuilder);
         }
                 
     }

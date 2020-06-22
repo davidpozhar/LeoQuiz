@@ -8,15 +8,15 @@ namespace LeoQuiz.Core.Abstractions.Services
     {
         public Task<List<UserDto>> GetAll();
 
-        public List<UserDto> GetAllInterviewees(int adminId);
+        public List<UserDto> GetAllInterviewees(string adminId);
 
-        public Task<UserDto> GetById(int Id);
+        public Task<UserDto> GetById(string Id);
 
         public Task<UserDto> Insert(UserDto userDto);
 
         public Task<UserDto> Update(UserDto userDto);
 
-        public Task Delete(int Id);
+        public Task Delete(string Id);
 
     }
 }
