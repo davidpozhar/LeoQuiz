@@ -61,7 +61,6 @@ namespace LeoQuiz.Services
             await _userRepository.SaveAsync().ConfigureAwait(false);
         }
 
-        //Костиль, голова не варить, виправити!!!!!
         public List<UserDto> GetAllInterviewees(string adminId)
         {
             var adminInfo =  _userRepository.GetAll()

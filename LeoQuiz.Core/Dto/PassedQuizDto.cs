@@ -17,6 +17,6 @@ namespace LeoQuiz.Core.Dto
 
         public UserDto User { get; set; }
 
-        public List<PassedQuizAnswerDto> PassedQuizAnswers { get; set; }
+        public List<PassedQuizQuestionDto> PassedQuizQuestions { get; set; }
     }
 }

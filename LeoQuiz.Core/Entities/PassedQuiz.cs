@@ -19,6 +19,6 @@ namespace LeoQuiz.Core.Entities
 
         public User User { get; set; }
 
-        public List<PassedQuizAnswer> PassedQuizAnswers { get; set; }
+        public List<PassedQuizQuestion> PassedQuizQuestions { get; set; }
     }
 }

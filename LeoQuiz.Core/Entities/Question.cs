@@ -9,8 +9,6 @@ namespace LeoQuiz.Core.Entities
 
         public string Text { get; set; }
 
-        public TimeSpan TimeLimit { get; set; }
-
         public int QuizId { get; set; }
 
         public Quiz Quiz { get; set; }

@@ -8,7 +8,13 @@
 
         public int AnswerId { get; set; }
 
-        public PassedQuiz PassedQuiz { get; set; }
+        public bool IsChecked { get; set; }
+
+        public bool IsCorrect { get; set; }
+
+        public int PassedQuizQuestionId { get; set; }
+
+        public PassedQuizQuestion PassedQuizQuestion { get; set; }
 
         public Answer Answer { get; set; }
     }

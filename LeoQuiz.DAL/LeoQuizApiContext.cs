@@ -71,20 +71,36 @@ namespace LeoQuiz.DAL
                 .HasForeignKey(e => e.UserId)
                 .HasConstraintName("Interviewee_PassedQuiz");
 
-                entity.HasMany(e => e.PassedQuizAnswers)
+                entity.HasMany(e => e.PassedQuizQuestions)
                 .WithOne(e => e.PassedQuiz)
                 .OnDelete(DeleteBehavior.NoAction)
                 .HasForeignKey(e => e.PassedQuizId)
-                .HasConstraintName("PassedQuizAnswers_PassedQuiz");
+                .HasConstraintName("PassedQuiz_PassedQuestion");
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
-                entity.Property(e => e.PassDate).IsRequired();
                 entity.Property(e => e.QuizId).IsRequired();
 
                 entity.Property<bool>("isDeleted");
                 entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
 
             });
+
+            modelBuilder.Entity<PassedQuizQuestion>(entity =>
+            {
+
+                entity.HasMany(e => e.Answers)
+                .WithOne(e => e.PassedQuizQuestion)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasForeignKey(e => e.PassedQuizQuestionId)
+                .HasConstraintName("PassedQuizAnswers_PassedQuestion");
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.Property<bool>("isDeleted");
+                entity.HasQueryFilter(m => EF.Property<bool>(m, "isDeleted") == false);
+
+            });
+
 
             modelBuilder.Entity<Answer>(entity =>
             {
