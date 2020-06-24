@@ -87,16 +87,48 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<int>("AnswerId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsChecked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
                     b.Property<int>("PassedQuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PassedQuizQuestionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
-                    b.HasIndex("PassedQuizId");
+                    b.HasIndex("PassedQuizQuestionId");
 
                     b.ToTable("PassedQuizAnswer");
+                });
+
+            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("PassedQuizId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PassedQuizId");
+
+                    b.ToTable("PassedQuizQuestion");
                 });
 
             modelBuilder.Entity("LeoQuiz.Core.Entities.Question", b =>
@@ -112,9 +144,6 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<TimeSpan>("TimeLimit")
-                        .HasColumnType("time");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
@@ -417,10 +446,20 @@ namespace LeoQuiz.DAL.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("LeoQuiz.Core.Entities.PassedQuizQuestion", "PassedQuizQuestion")
+                        .WithMany("Answers")
+                        .HasForeignKey("PassedQuizQuestionId")
+                        .HasConstraintName("PassedQuizAnswers_PassedQuestion")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizQuestion", b =>
+                {
                     b.HasOne("LeoQuiz.Core.Entities.PassedQuiz", "PassedQuiz")
-                        .WithMany("PassedQuizAnswers")
+                        .WithMany("PassedQuizQuestions")
                         .HasForeignKey("PassedQuizId")
-                        .HasConstraintName("PassedQuizAnswers_PassedQuiz")
+                        .HasConstraintName("PassedQuiz_PassedQuestion")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

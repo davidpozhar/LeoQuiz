@@ -23,6 +23,10 @@
     <Compile Remove="Migrations\20200408185034_UpdatedDb.Designer.cs" />
     <Compile Remove="Migrations\20200424120144_Identity.cs" />
     <Compile Remove="Migrations\20200424120144_Identity.Designer.cs" />
+    <Compile Remove="Migrations\20200518055800_CreateDb.cs" />
+    <Compile Remove="Migrations\20200518055800_CreateDb.Designer.cs" />
+    <Compile Remove="Migrations\20200624040712_NewDb.cs" />
+    <Compile Remove="Migrations\20200624040712_NewDb.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

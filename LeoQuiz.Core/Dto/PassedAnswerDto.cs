@@ -1,6 +1,6 @@
 ﻿namespace LeoQuiz.Core.Dto
 {
-    public class PassedQuizAnswerDto : IDto<int>
+    public class PassedAnswerDto : IDto<int>
     {
         public int Id { get; set; }
 
@@ -10,6 +10,6 @@
 
         public bool isChecked { get; set; }
 
-        public int PassedQuestionId { get; set; }
+        public int PassedQuestionId { get; set; } 
     }
 }

@@ -53,10 +53,12 @@ namespace LeoQuiz.Services
 
         public async Task<QuizDto> GetById(int Id)
         {
-            return await _quizRepository.GetAll()
+            var entity = await _quizRepository.GetAll()
                 .Where(quiz => quiz.Id == Id)
                 .ProjectTo<QuizDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync().ConfigureAwait(false);
+            entity.QuizUrl = GenerateUrl(entity.Id);
+            return entity;
         }
 
         public async Task<QuizViewDto> GetViewById(int Id)
@@ -72,7 +74,7 @@ namespace LeoQuiz.Services
         {
             Validation(quizDto);
             var entity = _mapper.Map(quizDto, new Quiz());
-            entity.QuizUrl = GenerateUrl(quizDto.Name);
+            entity.QuizUrl = GenerateUrl(quizDto.Id);
             await _quizRepository.Insert(entity).ConfigureAwait(false);
             await _quizRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Quiz, QuizDto>(entity);
@@ -83,7 +85,7 @@ namespace LeoQuiz.Services
         {
             Validation(quizDto);
             var entity = _mapper.Map(quizDto, new Quiz());
-            entity.QuizUrl = GenerateUrl(quizDto.Name);
+            entity.QuizUrl = GenerateUrl(quizDto.Id);
             _quizRepository.Update(entity);
             await _quizRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<Quiz, QuizDto>(entity);
@@ -100,14 +102,9 @@ namespace LeoQuiz.Services
             validator.ValidateAndThrow(dto);
         }
 
-        private string GenerateUrl(string quizInfo)
-        {
-            var randomString = System.IO.Path.GetRandomFileName();
-            var result = string.Concat(randomString.Zip(randomString, (a, b) => new[] { a, b }).SelectMany(c => c));
-            var Length = System.Math.Min(randomString.Length, quizInfo.Length);
-
-           
-            return randomString.Substring(Length) + quizInfo.Substring(Length); ;
+        private string GenerateUrl(int quizInfo)
+        {           
+            return "http://localhost:4200/passquiz/" + quizInfo;
         }
     }
 }

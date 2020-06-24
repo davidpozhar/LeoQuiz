@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace LeoQuiz.DAL.Migrations
 {
-    public partial class CreateDb : Migration
+    public partial class NewDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -217,7 +217,6 @@ namespace LeoQuiz.DAL.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(nullable: false),
-                    TimeLimit = table.Column<TimeSpan>(nullable: false),
                     QuizId = table.Column<int>(nullable: false),
                     isDeleted = table.Column<bool>(nullable: false)
                 },
@@ -230,6 +229,26 @@ namespace LeoQuiz.DAL.Migrations
                         principalTable: "Quiz",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PassedQuizQuestion",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(nullable: true),
+                    PassedQuizId = table.Column<int>(nullable: false),
+                    isDeleted = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PassedQuizQuestion", x => x.Id);
+                    table.ForeignKey(
+                        name: "PassedQuiz_PassedQuestion",
+                        column: x => x.PassedQuizId,
+                        principalTable: "PassedQuiz",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -261,7 +280,10 @@ namespace LeoQuiz.DAL.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PassedQuizId = table.Column<int>(nullable: false),
-                    AnswerId = table.Column<int>(nullable: false)
+                    AnswerId = table.Column<int>(nullable: false),
+                    IsChecked = table.Column<bool>(nullable: false),
+                    IsCorrect = table.Column<bool>(nullable: false),
+                    PassedQuizQuestionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,9 +294,9 @@ namespace LeoQuiz.DAL.Migrations
                         principalTable: "Answer",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "PassedQuizAnswers_PassedQuiz",
-                        column: x => x.PassedQuizId,
-                        principalTable: "PassedQuiz",
+                        name: "PassedQuizAnswers_PassedQuestion",
+                        column: x => x.PassedQuizQuestionId,
+                        principalTable: "PassedQuizQuestion",
                         principalColumn: "Id");
                 });
 
@@ -338,8 +360,13 @@ namespace LeoQuiz.DAL.Migrations
                 column: "AnswerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PassedQuizAnswer_PassedQuizId",
+                name: "IX_PassedQuizAnswer_PassedQuizQuestionId",
                 table: "PassedQuizAnswer",
+                column: "PassedQuizQuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PassedQuizQuestion_PassedQuizId",
+                table: "PassedQuizQuestion",
                 column: "PassedQuizId");
 
             migrationBuilder.CreateIndex(
@@ -380,10 +407,13 @@ namespace LeoQuiz.DAL.Migrations
                 name: "Answer");
 
             migrationBuilder.DropTable(
-                name: "PassedQuiz");
+                name: "PassedQuizQuestion");
 
             migrationBuilder.DropTable(
                 name: "Question");
+
+            migrationBuilder.DropTable(
+                name: "PassedQuiz");
 
             migrationBuilder.DropTable(
                 name: "Quiz");
