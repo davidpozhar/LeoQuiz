@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeoQuiz.Core.CustomTypes;
+using System;
 using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Dto
@@ -8,6 +9,8 @@ namespace LeoQuiz.Core.Dto
         public int Id { get; set; }
 
         public string Text { get; set; }
+
+        public EnumAnswerType Type { get; set; }
 
         public int QuizId { get; set; }
 

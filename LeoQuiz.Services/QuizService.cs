@@ -103,7 +103,7 @@ namespace LeoQuiz.Services
         }
 
         private string GenerateUrl(int quizInfo)
-        {           
+        {
             return "http://localhost:4200/passquiz/" + quizInfo;
         }
     }

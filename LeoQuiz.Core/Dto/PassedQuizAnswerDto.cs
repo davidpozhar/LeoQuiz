@@ -4,12 +4,8 @@
     {
         public int Id { get; set; }
 
-        public string Text { get; set; }
+        public int PassedQuizId { get; set; }
 
-        public bool IsCorrect { get; set; }
-
-        public bool isChecked { get; set; }
-
-        public int PassedQuestionId { get; set; }
+        public int AnswerId { get; set; }
     }
 }

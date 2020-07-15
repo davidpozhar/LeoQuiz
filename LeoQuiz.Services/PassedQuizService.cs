@@ -33,7 +33,7 @@ namespace LeoQuiz.Services
         public async Task<List<PassedQuizDto>> GetAll(string Id)
         {
             return await _passedquizRepository.GetAll()
-                .Include(pasquiz => pasquiz.PassedQuizQuestions)
+                .Include(pasquiz => pasquiz.PassedQuizAnswers)
                 .Include(pasquiz => pasquiz.User)
                 .Where(pasquiz => pasquiz.Quiz.UserId == Id)
                 .ProjectTo<PassedQuizDto>(_mapper.ConfigurationProvider)
@@ -58,12 +58,11 @@ namespace LeoQuiz.Services
         {
             CheckPassedQuiz(passedQuizDto);
             CheckExistUser(passedQuizDto);
-
-
             var entity = new PassedQuiz();
             _mapper.Map(passedQuizDto, entity);
             entity.User.UserRoleId = 2;
-            entity.Grade = CalculateGrade(entity.PassedQuizQuestions, entity.QuizId);
+            entity.Grade = CalculateGrade(entity.PassedQuizAnswers, entity.QuizId);
+            entity.isPassed = IsPassed(entity.QuizId, entity.Grade);
             await _passedquizRepository.Insert(entity).ConfigureAwait(false);
             await _passedquizRepository.SaveAsync().ConfigureAwait(false);
             return _mapper.Map<PassedQuiz, PassedQuizDto>(entity);
@@ -89,23 +88,31 @@ namespace LeoQuiz.Services
             }
         }
 
-        private int CalculateGrade(List<PassedQuizQuestion> questions, int quizId)
+        private int CalculateGrade(List<PassedQuizAnswer> answers, int quizId)
         {
             var allAnswers = _answerRepository.GetAll();
-            var grade = 0;
+            var passedCorrectCount = 0;
+            var quizCorrectCount = 0;
+            var quiz = _quizRepository.GetAll().Where(q=>q.Id == quizId).Include(quiz=>quiz.Questions).ThenInclude(question=>question.Answers).FirstOrDefault();
+            var questionList = quiz.Questions;
 
-            foreach(var a in questions)
+            foreach (var a in answers)
             {
-                foreach (var b in a.Answers)
+                if (allAnswers.Where(answer => answer.Id == a.AnswerId).ToList().FirstOrDefault().IsCorrect == true)
                 {
-                    if (allAnswers.Where(answer => answer.Id == a.Id).ToList().FirstOrDefault().IsCorrect == true && b.IsChecked == true )
-                    {
-                        grade += 1;
-                    }
+                    passedCorrectCount += 1;
                 }
-
             }
 
+            foreach (var q in questionList)
+            {
+                foreach (var answer in q.Answers)
+                {
+                    quizCorrectCount = answer.IsCorrect ? quizCorrectCount++ : quizCorrectCount;
+                }
+            }
+
+            var grade = passedCorrectCount / quizCorrectCount * 100;
             return grade;
         }
 

@@ -11,6 +11,8 @@ namespace LeoQuiz.Core.Entities
 
         public DateTime PassDate { get; set; }
 
+        public bool isPassed { get; set; }
+
         public int QuizId { get; set; }
 
         public string UserId { get; set; }
@@ -19,6 +21,6 @@ namespace LeoQuiz.Core.Entities
 
         public User User { get; set; }
 
-        public List<PassedQuizQuestion> PassedQuizQuestions { get; set; }
+        public List<PassedQuizAnswer> PassedQuizAnswers { get; set; }
     }
 }

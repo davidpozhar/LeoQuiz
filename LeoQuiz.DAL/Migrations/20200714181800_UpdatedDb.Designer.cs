@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeoQuiz.DAL.Migrations
 {
     [DbContext(typeof(LeoQuizApiContext))]
-    [Migration("20200624041029_NewDb")]
-    partial class NewDb
+    [Migration("20200714181800_UpdatedDb")]
+    partial class UpdatedDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,6 +70,9 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("isPassed")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuizId");
@@ -89,48 +92,16 @@ namespace LeoQuiz.DAL.Migrations
                     b.Property<int>("AnswerId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsChecked")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
-
                     b.Property<int>("PassedQuizId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PassedQuizQuestionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
-                    b.HasIndex("PassedQuizQuestionId");
-
-                    b.ToTable("PassedQuizAnswer");
-                });
-
-            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizQuestion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PassedQuizId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("PassedQuizId");
 
-                    b.ToTable("PassedQuizQuestion");
+                    b.ToTable("PassedQuizAnswer");
                 });
 
             modelBuilder.Entity("LeoQuiz.Core.Entities.Question", b =>
@@ -178,8 +149,8 @@ namespace LeoQuiz.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("TimeLimit")
-                        .HasColumnType("time");
+                    b.Property<int>("TimeLimit")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -448,20 +419,10 @@ namespace LeoQuiz.DAL.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("LeoQuiz.Core.Entities.PassedQuizQuestion", "PassedQuizQuestion")
-                        .WithMany("Answers")
-                        .HasForeignKey("PassedQuizQuestionId")
-                        .HasConstraintName("PassedQuizAnswers_PassedQuestion")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("LeoQuiz.Core.Entities.PassedQuizQuestion", b =>
-                {
                     b.HasOne("LeoQuiz.Core.Entities.PassedQuiz", "PassedQuiz")
-                        .WithMany("PassedQuizQuestions")
+                        .WithMany("PassedQuizAnswers")
                         .HasForeignKey("PassedQuizId")
-                        .HasConstraintName("PassedQuiz_PassedQuestion")
+                        .HasConstraintName("PassedQuizAnswers_PassedQuiz")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

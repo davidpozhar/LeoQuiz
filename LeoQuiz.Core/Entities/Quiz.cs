@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LeoQuiz.Core.CustomTypes;
+using System;
 using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Entities
@@ -9,7 +10,7 @@ namespace LeoQuiz.Core.Entities
 
         public string Name { get; set; }
 
-        public TimeSpan TimeLimit { get; set; }
+        public int TimeLimit { get; set; }
 
         public int MaxAttempts { get; set; }
 

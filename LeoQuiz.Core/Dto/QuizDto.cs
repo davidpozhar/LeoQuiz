@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace LeoQuiz.Core.Dto
 {
@@ -9,7 +8,7 @@ namespace LeoQuiz.Core.Dto
 
         public string Name { get; set; }
 
-        public TimeSpan TimeLimit { get; set; }
+        public int TimeLimit { get; set; }
 
         public int MaxAttempts { get; set; }
 

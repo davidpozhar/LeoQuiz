@@ -11,6 +11,8 @@ namespace LeoQuiz.Core.Dto
 
         public DateTime PassDate { get; set; }
 
+        public bool isPassed { get; set; }
+
         public int QuizId { get; set; }
 
         public string UserId { get; set; }
