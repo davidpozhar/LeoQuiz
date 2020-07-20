@@ -63,7 +63,7 @@ namespace LeoQuiz.Services
 
         public async Task<QuizViewDto> GetViewById(int Id)
         {
-            return await _quizRepository.GetAll()
+            return await _quizRepository.GetAll().Include(q=>q.Questions).ThenInclude(question=>question.Answers)
                 .Where(quiz => quiz.Id == Id)
                 .ProjectTo<QuizViewDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync().ConfigureAwait(false);

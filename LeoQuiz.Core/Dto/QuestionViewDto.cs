@@ -11,7 +11,7 @@ namespace LeoQuiz.Core.Dto
 
         public int TimeLimit { get; set; }
 
-        public EnumAnswerType Type { get; set; }
+        public int Type { get; set; }
 
         public int QuizId { get; set; }
 

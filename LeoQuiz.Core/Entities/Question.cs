@@ -10,8 +10,6 @@ namespace LeoQuiz.Core.Entities
 
         public string Text { get; set; }
 
-        public EnumAnswerType Type => this.Answers.Count(a => a.IsCorrect) > 1 ?  EnumAnswerType.Multiple :  EnumAnswerType.Single;
-
         public int QuizId { get; set; }
 
         public Quiz Quiz { get; set; }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LeoQuiz.DAL.Migrations
 {
     [DbContext(typeof(LeoQuizApiContext))]
-    [Migration("20200714181800_UpdatedDb")]
+    [Migration("20200720054725_UpdatedDb")]
     partial class UpdatedDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

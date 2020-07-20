@@ -1,8 +1,9 @@
 ﻿namespace LeoQuiz.Core.CustomTypes
 {
-    public enum EnumAnswerType
+    public static class EnumAnswerType
     {
-        Single,
-        Multiple
+        public const string Single = "Single";
+
+        public const string Multiple = "Multiple";
     }
 }

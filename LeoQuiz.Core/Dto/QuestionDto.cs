@@ -10,8 +10,6 @@ namespace LeoQuiz.Core.Dto
 
         public string Text { get; set; }
 
-        public EnumAnswerType Type { get; set; }
-
         public int QuizId { get; set; }
 
         public List<AnswerDto> Answers { get; set; }
